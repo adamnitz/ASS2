@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.messages.AttackEvent;
+
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -10,11 +12,12 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	
+
+	private int counter=0; //counter for roundRubin
 	private static MessageBusImpl INSTANCE = null;
 	LinkedBlockingQueue<Message> messages;
 	HashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
-	HashMap<MicroService, Vector <Class<? extends Event<Boolean>>>> typeMessage; // typeMessage for each microService
+	HashMap<Class<? extends Event<Boolean>> ,Vector<MicroService>> typeMessage; // typeMessage for each microService
 	HashMap<MicroService, Future<Boolean>> calculation; //update futures
 
 	private MessageBusImpl (){
@@ -29,9 +32,18 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
+	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m)
+	{
+		if(typeMessage.get(type)== null)
+		{
+			Vector<MicroService> whichMicro = new Vector<MicroService>();
+			typeMessage.put((Class<? extends Event<Boolean>>) type,whichMicro);
+		}
 
-		typeMessage.get(m).add((Class<? extends Event<Boolean>>) type);
+		if(!typeMessage.get(type).contains(m))
+			typeMessage.get(type).add(m);
+
+
 
 	}
 
@@ -53,15 +65,29 @@ public class MessageBusImpl implements MessageBus {
 	
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
-		
+		messages.add(e);
+
+		Message msg = messages.remove();
+		Vector<MicroService> microVec = typeMessage.get(AttackEvent.class);
+
+		if(msg.getClass()==AttackEvent.class)
+		{
+			if(counter==microVec.size())
+				counter = 0;
+			 if (counter<microVec.size()) {
+
+				MicroService micro = microVec.get(counter);
+				mapQueue.get(micro).add(msg);
+				counter ++;
+			}
+		}
+
         return null;
 	}
 
 	@Override
 	public void register(MicroService m) {
 		mapQueue.put(m,new LinkedBlockingQueue<Message>());
-		Vector<Class<? extends Event<Boolean>>> typeMsg = new Vector<Class<? extends Event<Boolean>>>();
-		typeMessage.put(m,typeMsg);
 	}
 
 	@Override

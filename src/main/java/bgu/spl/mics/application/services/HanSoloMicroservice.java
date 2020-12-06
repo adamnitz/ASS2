@@ -32,7 +32,6 @@ public class HanSoloMicroservice extends MicroService {
     protected void initialize() {
         msgBus.register(this);
         msgBus.subscribeEvent(AttackEvent.class,this);
-        Vector<Message> HsTypeMsg = new Vector<Message>();
 
     }
 
