@@ -15,6 +15,14 @@ public class Ewoks {
 
     private Vector <Ewok> ewoks = new Vector<Ewok>();
 
+
+    public Ewoks(int numOfEwoks) {
+       for(int i=0; i<numOfEwoks;i++)
+       {
+           ewoks.add(new Ewok(i+1));
+       }
+    }
+
     public Vector<Ewok> getEwoks()
     {
         return ewoks;

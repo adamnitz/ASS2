@@ -27,6 +27,7 @@ public class C3POMicroservice extends MicroService {
     protected void initialize() {
         msgBus.register(this);
         msgBus.subscribeEvent(AttackEvent.class,this);
+
     }
 
     public void callBack(){

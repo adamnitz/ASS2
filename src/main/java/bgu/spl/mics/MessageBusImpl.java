@@ -1,7 +1,7 @@
 package bgu.spl.mics;
 
 import java.util.HashMap;
-import java.util.Queue;
+import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -13,11 +13,12 @@ public class MessageBusImpl implements MessageBus {
 	
 	private static MessageBusImpl INSTANCE = null;
 	LinkedBlockingQueue<Message> messages;
-	HashMap<MicroService, LinkedBlockingQueue> myMap;
-
+	HashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
+	HashMap<MicroService, Vector <Class<? extends Event<Boolean>>>> typeMessage; // typeMessage for each microService
+	HashMap<MicroService, Future<Boolean>> calculation; //update futures
 
 	private MessageBusImpl (){
-		myMap = new HashMap();
+		mapQueue = new HashMap();
 		messages = new LinkedBlockingQueue<Message>();
 	}
 
@@ -29,7 +30,9 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		
+
+		typeMessage.get(m).add((Class<? extends Event<Boolean>>) type);
+
 	}
 
 	@Override
@@ -56,12 +59,14 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void register(MicroService m) {
-		myMap.put(m,new LinkedBlockingQueue<Message>());
+		mapQueue.put(m,new LinkedBlockingQueue<Message>());
+		Vector<Class<? extends Event<Boolean>>> typeMsg = new Vector<Class<? extends Event<Boolean>>>();
+		typeMessage.put(m,typeMsg);
 	}
 
 	@Override
 	public void unregister(MicroService m) {
-		myMap.remove(m);
+		mapQueue.remove(m);
 	}
 
 	@Override

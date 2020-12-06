@@ -1,9 +1,12 @@
 package bgu.spl.mics.application.services;
 
 
+import bgu.spl.mics.Message;
 import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
+
+import java.util.Vector;
 
 /**
  * HanSoloMicroservices is in charge of the handling {@link AttackEvents}.
@@ -29,6 +32,8 @@ public class HanSoloMicroservice extends MicroService {
     protected void initialize() {
         msgBus.register(this);
         msgBus.subscribeEvent(AttackEvent.class,this);
+        Vector<Message> HsTypeMsg = new Vector<Message>();
+
     }
 
     public void callBack(){
