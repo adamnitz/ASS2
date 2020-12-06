@@ -15,7 +15,7 @@ import java.awt.font.TextHitInfo;
  */
 public class Main {
 	public static void main(String[] args) {
-		Gson gson = new Gson();
+		//hello nitz thank you for applying github
 
 		//Thread Leia = new Thread(LeiaMicroservice);
 		//Thread C3PO = new Thread(C3POMicroservice);
