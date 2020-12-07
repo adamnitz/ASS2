@@ -97,7 +97,14 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public Message awaitMessage(MicroService m) throws InterruptedException {
-		
-		return null;
+		if(!mapQueue.containsKey(m))
+			throw new IllegalStateException();
+		while (mapQueue.get(m).isEmpty())
+			wait();
+
+		Message msg= mapQueue.get(m).remove();
+
+
+		return msg;
 	}
 }
