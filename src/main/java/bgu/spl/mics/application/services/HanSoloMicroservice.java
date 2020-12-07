@@ -6,6 +6,7 @@ import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 
+import javax.security.auth.callback.Callback;
 import java.util.Vector;
 
 /**
@@ -16,7 +17,7 @@ import java.util.Vector;
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
-public class HanSoloMicroservice extends MicroService {
+public class HanSoloMicroservice extends MicroService implements Callback {
 
     private MessageBus msgBus;
 
@@ -36,6 +37,7 @@ public class HanSoloMicroservice extends MicroService {
     }
 
     public void callBack(){
+
 
     }
 }

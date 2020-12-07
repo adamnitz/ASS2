@@ -16,5 +16,8 @@ public class AttackEvent extends Attack implements Event<Boolean>  {
     public AttackEvent(List<Integer> serialNumbers, int duration) {
         super(serialNumbers, duration);
     }
+
+
+
 }
 

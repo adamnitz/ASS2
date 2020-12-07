@@ -21,13 +21,14 @@ package bgu.spl.mics;
 public abstract class MicroService implements Runnable {
 
     MessageBusImpl msgBus = MessageBusImpl.getInstance();
+    String name;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)
      */
     public MicroService(String name) {
-    	
+    	this.name = name;
     }
 
     /**
@@ -52,7 +53,8 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-    	
+        msgBus.subscribeEvent(type,this);
+
     }
 
     /**
@@ -141,7 +143,7 @@ public abstract class MicroService implements Runnable {
      *         construction time and is used mainly for debugging purposes.
      */
     public final String getName() {
-        return null;
+        return name;
     }
 
     /**
@@ -150,7 +152,15 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run() {
-    	
+            try {
+               Message msg=  msgBus.awaitMessage(this);
+
+            } catch (InterruptedException e) {
+              System.out.println("interruptException from awaitMessage");
+            }
+
+            //callback();
+
     }
 
 }

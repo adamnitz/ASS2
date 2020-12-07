@@ -78,6 +78,7 @@ public class MessageBusImpl implements MessageBus {
 
 				MicroService micro = microVec.get(counter);
 				mapQueue.get(micro).add(msg);
+				notifyAll();
 				counter ++;
 			}
 		}

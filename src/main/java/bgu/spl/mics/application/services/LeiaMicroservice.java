@@ -10,6 +10,8 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.passiveObjects.Attack;
 
+import javax.security.auth.callback.Callback;
+
 /**
  * LeiaMicroservices Initialized with Attack objects, and sends them as  {@link AttackEvents}.
  * This class may not hold references for objects which it is not responsible for:
@@ -18,7 +20,7 @@ import bgu.spl.mics.application.passiveObjects.Attack;
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
-public class LeiaMicroservice extends MicroService {
+public class LeiaMicroservice extends MicroService implements Callback {
 	private AttackEvent[] attacks;
 	private MessageBus msgBus;
 	
