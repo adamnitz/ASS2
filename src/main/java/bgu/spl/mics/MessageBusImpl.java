@@ -1,6 +1,8 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.messages.AttackEvent;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import sun.jvm.hotspot.oops.ObjArrayKlass;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -19,6 +21,7 @@ public class MessageBusImpl implements MessageBus {
 	HashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
 	HashMap<Class<? extends Event<Boolean>> ,Vector<MicroService>> typeMessage; // typeMessage for each microService
 	HashMap<MicroService, Future<Boolean>> calculation; //update futures
+	HashMap<Class<? extends Event<Boolean>>, Callback<Message>> callMap; //check the type in callBack
 
 	private MessageBusImpl (){
 		mapQueue = new HashMap();
