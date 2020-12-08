@@ -32,7 +32,6 @@ public class LeiaMicroservice extends MicroService implements Callback {
 
     @Override
     protected void initialize() {
-        msgBus.register(this);
         for(int i=0; i<attacks.length;i++)
             sendEvent(attacks[i]);
     }

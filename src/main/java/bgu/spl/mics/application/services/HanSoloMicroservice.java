@@ -31,7 +31,6 @@ public class HanSoloMicroservice extends MicroService implements Callback {
 
     @Override
     protected void initialize() {
-        msgBus.register(this);
         msgBus.subscribeEvent(AttackEvent.class,this);
         (msg)->{}
     }

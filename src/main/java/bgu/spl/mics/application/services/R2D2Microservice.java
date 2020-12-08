@@ -28,7 +28,6 @@ public class R2D2Microservice extends MicroService implements Callback {
 
     @Override
     protected void initialize() {
-        msgBus.register(this);
         msgBus.subscribeEvent(DeactivationEvent.class,this);
     }
 

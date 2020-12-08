@@ -24,7 +24,6 @@ public class LandoMicroservice  extends MicroService implements Callback {
 
     @Override
     protected void initialize() {
-       msgBus.register(this);
        msgBus.subscribeEvent(BombDestroyerEvent.class, this);
     }
 
