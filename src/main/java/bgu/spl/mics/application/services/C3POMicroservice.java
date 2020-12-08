@@ -1,11 +1,16 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Event;
 import bgu.spl.mics.Message;
 import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
+import bgu.spl.mics.application.passiveObjects.Attack;
+import bgu.spl.mics.application.passiveObjects.Ewoks;
+import bgu.spl.mics.application.passiveObjects.Input;
 
 import javax.security.auth.callback.Callback;
+import java.util.List;
 
 
 /**
@@ -28,14 +33,15 @@ public class C3POMicroservice extends MicroService implements Callback {
 
     @Override
     protected void initialize() {
-        msgBus.subscribeEvent(AttackEvent.class,this);
-        ()->{retur}
-
+        subscribeEvent(AttackEvent.class,(event)-> {
+            Attack attack = event.getAttack();
+            List<Integer> serials = attack.getSerials();
+            Ewoks ewoks = Ewoks.getInstance();
+        });
     }
 
     public void callBack(){
-        Message msg=  msgBus.awaitMessage(this); //needs to be in run
-        msg.
+
 
     }
 }

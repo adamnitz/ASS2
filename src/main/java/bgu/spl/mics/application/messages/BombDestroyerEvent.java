@@ -15,4 +15,8 @@ public class BombDestroyerEvent implements Event<Boolean> {
     {
         return duration;
     }
+    public Event<Boolean> getEvent()
+    {
+        return this;
+    }
 }

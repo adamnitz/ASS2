@@ -17,6 +17,15 @@ public class AttackEvent extends Attack implements Event<Boolean>  {
         super(serialNumbers, duration);
     }
 
+    public Event<Boolean> getEvent()
+    {
+        return this;
+    }
+
+    public Attack getAttack()
+    {
+        return this;
+    }
 
 
 }

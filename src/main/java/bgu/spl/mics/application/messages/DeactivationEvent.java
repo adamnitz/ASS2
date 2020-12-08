@@ -16,4 +16,9 @@ public class DeactivationEvent implements Event<Boolean> {
         return duration;
     }
 
+    public Event<Boolean> getEvent()
+    {
+        return this;
+    }
+
 }

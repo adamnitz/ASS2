@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
+import bgu.spl.mics.MessageBusImpl;
+
 import java.util.Vector;
 
 /**
@@ -14,7 +16,7 @@ import java.util.Vector;
 public class Ewoks {
 
     private Vector <Ewok> ewoks = new Vector<Ewok>();
-
+    private static Ewoks INSTANCE = null;
 
     public Ewoks(int numOfEwoks) {
        for(int i=0; i<numOfEwoks;i++)
@@ -23,10 +25,13 @@ public class Ewoks {
        }
     }
 
-    public Vector<Ewok> getEwoks()
-    {
-        return ewoks;
+
+    public static Ewoks getInstance(){
+        if(INSTANCE ==null)
+            INSTANCE = new Ewoks(0);
+        return INSTANCE;
     }
+
 
 
 
