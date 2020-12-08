@@ -18,14 +18,14 @@ public class Ewok {
     /**
      * Acquires an Ewok
      */
-    public void acquire() {
+    public synchronized void acquire() {
 		available =true;
     }
 
     /**
      * release an Ewok
      */
-    public void release() {
+    public synchronized void release() {
     	available=false;
     }
 

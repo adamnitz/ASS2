@@ -8,6 +8,7 @@ import bgu.spl.mics.application.passiveObjects.Attack;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
 
+import javax.swing.plaf.TableHeaderUI;
 import java.util.List;
 
 
@@ -38,24 +39,29 @@ public class C3POMicroservice extends MicroService  {
 
             for(int i=0; i<ewoks.getEwoks().size(); i++)
             {
-                for(int j=0; j< serials.size(); j++)
-                {
-                    if(serials.get(j) == i+1)
+                    if(serials.get(i) == i+1)
                     {
-                        if(ewoks.getEwoks().get(i).getAvailable()== true)
+                        if (ewoks.getEwoks().get(i).getAvailable() == true)
                         {
                             ewoks.getEwoks().get(i).acquire();//for how long
                         }
                         else
-                                Thread.wait();
+                        {
+                            try{
+                                this.wait();
+                            }
+                            catch(InterruptedException e){}
+                        }
 
-                    }
-                }
+
+                     }
 
             }
 
-            Thread.sleep(event.getDuration());
-        });
+                Thread.sleep(event.getDuration());
+                notifyAll();
+
+            });
     }
 
 
