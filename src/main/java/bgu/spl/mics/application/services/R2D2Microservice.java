@@ -2,10 +2,8 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.DeactivationEvent;
 
-import javax.security.auth.callback.Callback;
 
 /**
  * R2D2Microservices is in charge of the handling {@link DeactivationEvent}.
@@ -15,7 +13,7 @@ import javax.security.auth.callback.Callback;
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
-public class R2D2Microservice extends MicroService implements Callback {
+public class R2D2Microservice extends MicroService {
 
     private MessageBus msgBus;
 
@@ -31,7 +29,4 @@ public class R2D2Microservice extends MicroService implements Callback {
         msgBus.subscribeEvent(DeactivationEvent.class,this);
     }
 
-    public void callBack(){
-
-    }
 }

@@ -1,7 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
-import bgu.spl.mics.MessageBusImpl;
+import bgu.spl.mics.application.passiveObjects.Input;
 
 import java.util.Vector;
 
@@ -28,8 +28,12 @@ public class Ewoks {
 
     public static Ewoks getInstance(){
         if(INSTANCE ==null)
-            INSTANCE = new Ewoks(0);
+            INSTANCE = new Ewoks(0); //check
         return INSTANCE;
+    }
+
+    public Vector<Ewok> getEwoks(){
+        return ewoks;
     }
 
 
