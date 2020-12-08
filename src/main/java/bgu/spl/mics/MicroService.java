@@ -54,8 +54,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
         msgBus.subscribeEvent(type,this);
-        msgBus.callMap.put(type.getClass(),callback); // Talk to Peleg.
-
+        msgBus.callMap.put(type,callback); // Talk to Peleg.
 
 
     }
@@ -81,7 +80,9 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-    	
+        msgBus.subscribeBroadcast(type,this);
+        msgBus.callMap.put(type,callback);
+
     }
 
     /**
@@ -98,7 +99,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
 
-        msgBus.messages.add(e);
+        msgBus.sendEvent(e);
         //need to return future
 
         return null;

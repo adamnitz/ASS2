@@ -78,15 +78,14 @@ public class MessageBusImpl implements MessageBus {
 			if(counter==microVec.size())
 				counter = 0;
 			 if (counter<microVec.size()) {
-
 				MicroService micro = microVec.get(counter);
 				mapQueue.get(micro).add(msg);
-				notifyAll();
+				//notifyAll();//checkWhy
 				counter ++;
 			}
 		}
 
-        return null;
+        return null;//change to futere colsheo
 	}
 
 	@Override
