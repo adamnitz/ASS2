@@ -18,7 +18,7 @@ public class Future<T> {
 	 * This should be the the only public constructor in this class.
 	 */
 	public Future() {
-
+		isDone=false;
 	}
 	
 	/**
@@ -29,14 +29,18 @@ public class Future<T> {
      * @return return the result of type T if it is available, if not wait until it is available.
      * 	       
      */
-	public T get() {
+	public T get()  {
 
-		/*while(!isDone)
-			//wait();
+		while(!isDone)
+		{
+			try
+			{
+				this.wait();
+			}
+			catch (InterruptedException e){}
+		}
+
 		return result;
-		*/
-
-        return null;
 
 	}
 	

@@ -20,8 +20,9 @@ package bgu.spl.mics;
  */
 public abstract class MicroService implements Runnable {
 
-    MessageBusImpl msgBus = MessageBusImpl.getInstance();
+    MessageBusImpl msgBus;
     String name;
+    Boolean isFinish;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -29,6 +30,8 @@ public abstract class MicroService implements Runnable {
      */
     public MicroService(String name) {
     	this.name = name;
+    	msgBus = MessageBusImpl.getInstance();
+    	isFinish= false;
     }
 
     /**
@@ -55,8 +58,6 @@ public abstract class MicroService implements Runnable {
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
         msgBus.subscribeEvent(type,this);
         msgBus.callMap.put(type,callback); // Talk to Peleg.
-
-
     }
 
     /**
@@ -99,10 +100,9 @@ public abstract class MicroService implements Runnable {
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
 
-        msgBus.sendEvent(e);
-        //need to return future
+        Future future = msgBus.sendEvent(e);
 
-        return null;
+        return future;
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class MicroService implements Runnable {
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
-    	
+    	msgBus.sendBroadcast(b);
     }
 
     /**
@@ -126,7 +126,7 @@ public abstract class MicroService implements Runnable {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
-    	
+    	msgBus.complete(e, result);
     }
 
     /**
@@ -139,7 +139,7 @@ public abstract class MicroService implements Runnable {
      * message.
      */
     protected final void terminate() {
-    	
+    	isFinish = true;
     }
 
     /**
@@ -169,7 +169,6 @@ public abstract class MicroService implements Runnable {
               System.out.println("interruptException from awaitMessage");
             }
 
-            //callback();
 
     }
 

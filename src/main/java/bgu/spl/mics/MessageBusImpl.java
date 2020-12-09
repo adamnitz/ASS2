@@ -1,6 +1,8 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.messages.AttackEvent;
+import bgu.spl.mics.application.messages.BombDestroyerEvent;
+import bgu.spl.mics.application.messages.DeactivationEvent;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import sun.jvm.hotspot.oops.ObjArrayKlass;
 
@@ -19,9 +21,9 @@ public class MessageBusImpl implements MessageBus {
 	private static MessageBusImpl INSTANCE = null;
 	LinkedBlockingQueue<Message> messages;
 	HashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
-	HashMap<Class<? extends Event<Boolean>> ,Vector<MicroService>> typeMessage; // typeMessage for each microService
-	HashMap<MicroService, Future<Boolean>> calculation; //update futures
-	HashMap<Class<? extends Event<Boolean>>, Callback<Message>> callMap; //check the type in callBack
+	HashMap<Class <? extends Message> ,Vector<MicroService>> typeMessage; // typeMessage for each microService
+	HashMap<Event, Future<Boolean>> futureMap; //update futures
+	HashMap<Class<? extends Message>, Callback> callMap; //check the type in callBack
 
 	private MessageBusImpl (){
 		mapQueue = new HashMap();
@@ -37,32 +39,45 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m)
 	{
+
 		if(typeMessage.get(type)== null)
 		{
 			Vector<MicroService> whichMicro = new Vector<MicroService>();
-			typeMessage.put((Class<? extends Event<Boolean>>) type,whichMicro);
+			typeMessage.put( type,whichMicro);
 		}
 
 		if(!typeMessage.get(type).contains(m))
 			typeMessage.get(type).add(m);
 
-
-
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		
-    }
+		if(typeMessage.get(type)== null)
+		{
+			Vector<MicroService> whichMicro = new Vector<MicroService>();
+			typeMessage.put(type,whichMicro);
+		}
+
+		if(!typeMessage.get(type).contains(m))
+			typeMessage.get(type).add(m);
+	}
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		
+		futureMap.get(e).resolve((Boolean) result);
 	}
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		
+		messages.add(b);
+		Message msg = messages.remove();
+
+		Vector<MicroService> micro = typeMessage.get(msg.getClass());
+		for(int i=0; i <micro.size();i++)
+		{
+			mapQueue.get(micro.get(i)).add(msg);
+		}
 	}
 
 	
@@ -71,21 +86,35 @@ public class MessageBusImpl implements MessageBus {
 		messages.add(e);
 
 		Message msg = messages.remove();
-		Vector<MicroService> microVec = typeMessage.get(AttackEvent.class);
+		Future future = new Future();
+
+		futureMap.put(e,future);
 
 		if(msg.getClass()==AttackEvent.class)
 		{
+
+			Vector<MicroService> microVec = typeMessage.get(AttackEvent.class);
 			if(counter==microVec.size())
 				counter = 0;
 			 if (counter<microVec.size()) {
 				MicroService micro = microVec.get(counter);
 				mapQueue.get(micro).add(msg);
-				//notifyAll();//checkWhy
 				counter ++;
 			}
 		}
 
-        return null;//change to futere colsheo
+		else
+		{
+			Vector<MicroService> micro = typeMessage.get(msg.getClass());
+			for(int i=0; i <micro.size();i++)
+			{
+				mapQueue.get(micro.get(i)).add(msg);
+			}
+		}
+
+
+
+        return (Future<T>) futureMap.get(msg.getClass());
 	}
 
 	@Override

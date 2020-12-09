@@ -21,18 +21,19 @@ import javax.security.auth.callback.Callback;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class LeiaMicroservice extends MicroService implements Callback {
+
 	private AttackEvent[] attacks;
-	private MessageBus msgBus;
-	
+
     public LeiaMicroservice(AttackEvent[] attacks, MessageBus messageBus) {
         super("Leia");
 		this.attacks = attacks;
-        msgBus = messageBus;
     }
 
     @Override
     protected void initialize() {
         for(int i=0; i<attacks.length;i++)
             sendEvent(attacks[i]);
+
     }
+
 }
