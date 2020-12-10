@@ -8,6 +8,7 @@ import bgu.spl.mics.application.messages.TerminationBroadcast;
 import bgu.spl.mics.application.passiveObjects.Attack;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
+
 import java.util.List;
 
 
@@ -68,6 +69,7 @@ public class HanSoloMicroservice extends MicroService {
 
         });
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setHanSoloTerminate();});
+        d.setHanSoloFinish();
     }
 
 }

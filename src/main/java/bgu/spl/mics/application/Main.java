@@ -26,7 +26,7 @@ public class Main {
 		Input json = JsonInputReader.getInputFromJson(input);
 		System.out.println(json);
 
-		Ewoks ewoks = new Ewoks(json.getEwoks());
+		//Ewoks ewoks = new Ewoks(json.getEwoks());
 
 	} catch (IOException e) {
 		e.printStackTrace();

@@ -1,14 +1,12 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.messages.AttackEvent;
-import bgu.spl.mics.application.messages.BombDestroyerEvent;
-import bgu.spl.mics.application.messages.DeactivationEvent;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import sun.jvm.hotspot.oops.ObjArrayKlass;
+
 
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -24,20 +22,24 @@ public class MessageBusImpl implements MessageBus {
 
 		return MessageBusImplHolder.instance;
 	}
-	private int counter=0; //counter for roundRubin
+
+	private int counter; //counter for roundRubin
+	private int totalAttacks; //count total attacks of han solo and 3cpo
 
 	LinkedBlockingQueue<Message> messages;
-	HashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
-	HashMap<Class <? extends Message> ,Vector<MicroService>> typeMessage; // typeMessage for each microService
-	public HashMap<Event, Future<Boolean>> futureMap; //update futures
-	public HashMap<Class<? extends Message>, Callback> callMap; //check the type in callBack
+	ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
+	ConcurrentHashMap<Class <? extends Message> ,Vector<MicroService>> typeMessage; // typeMessage for each microService
+	public ConcurrentHashMap<Event, Future<Boolean>> futureMap; //update futures
+	public ConcurrentHashMap<Class<? extends Message>, Callback> callMap; //check the type in callBack
 
 	private MessageBusImpl (){
 		messages = new LinkedBlockingQueue<Message>();
-		mapQueue = new HashMap<>();
-		typeMessage = new HashMap<>();
-		futureMap = new HashMap<>();
-		callMap = new HashMap<>();
+		mapQueue = new ConcurrentHashMap<>();
+		typeMessage = new ConcurrentHashMap<>();
+		futureMap = new ConcurrentHashMap<>();
+		callMap = new ConcurrentHashMap<>();
+		totalAttacks =0;
+		counter=0;
 	}
 
 
@@ -113,7 +115,8 @@ public class MessageBusImpl implements MessageBus {
 				MicroService micro = microVec.get(counter);
 				mapQueue.get(micro).add(msg);
 				counter ++;
-			}
+			 }
+			 totalAttacks++;
 		}
 
 		else

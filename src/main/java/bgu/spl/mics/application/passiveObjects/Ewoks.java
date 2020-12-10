@@ -18,20 +18,28 @@ public class Ewoks {
     private Vector <Ewok> ewoks;
 
     private static class EwoksHolder{
-        private static Ewoks instance = new Ewoks(0);
+
+        private static Ewoks instance = new Ewoks();
     }
 
-    private Ewoks(int numOfEwoks) {
+    private Ewoks() {
         ewoks = new Vector<>();
-       for(int i=0; i<numOfEwoks;i++)
-       {
-           ewoks.add(new Ewok(i+1));
-       }
+
     }
 
+    public void setEwoks(int numOfEwoks) {
+        for(int i=0; i<numOfEwoks;i++)
+        {
+            ewoks.add(new Ewok(i+1));
+        }
+    }
 
     public static Ewoks getInstance(){
       return EwoksHolder.instance;
+    }
+
+    public Vector<Ewok> getEwoks() {
+        return ewoks;
     }
 
 

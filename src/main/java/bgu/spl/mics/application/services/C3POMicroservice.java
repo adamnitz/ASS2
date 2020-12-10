@@ -69,6 +69,7 @@ public class C3POMicroservice extends MicroService  {
             });
 
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setC3POTerminate();});
+        d.setC3POFinish();
 
     }
 
