@@ -2,13 +2,15 @@ package bgu.spl.mics.application.services;
 
 import java.text.DecimalFormat;
 import java.time.DateTimeException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
 import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
-import bgu.spl.mics.Future;
+import bgu.spl.mics.application.passiveObjects.Diary;
+import bgu.spl.mics.application.passiveObjects.Input;
 import bgu.spl.mics.application.messages.DeactivationEvent;
 import bgu.spl.mics.application.messages.TerminationBroadcast;
 
@@ -25,29 +27,31 @@ import javax.security.auth.callback.Callback;
  */
 public class LeiaMicroservice extends MicroService implements Callback {
 
-	private AttackEvent[] attacks;
+    private AttackEvent[] attacks;
 
     public LeiaMicroservice(AttackEvent[] attacks, MessageBus messageBus) {
         super("Leia");
-		this.attacks = attacks;
+        this.attacks = attacks;
     }
 
     @Override
     protected void initialize() {
-        subscribeBroadcast(TerminationBroadcast.class, (e)->{terminate()});
+        subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setLeiaTerminate();});
 
-        for(int i=0; i<attacks.length;i++)
-            sendEvent(attacks[i]);
+            for (int i = 0; i < attacks.length; i++)
+                sendEvent(attacks[i]);
 
 
-        for(int i=0; i<msgBus.futureMap.size(); i++)
-        {
-            msgBus.futureMap.get(i).get();
+            for (int i = 0; i < msgBus.futureMap.size(); i++) {
+                msgBus.futureMap.get(i).get();
+            }
+
+            DeactivationEvent event = new DeactivationEvent();
+            sendEvent(event);
+
         }
 
-        DeactivationEvent event = new DeactivationEvent();
-        sendEvent(event);
-     }
 
 
 }
+

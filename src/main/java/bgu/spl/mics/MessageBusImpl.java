@@ -16,9 +16,16 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
+	private static class MessageBusImplHolder{
+		private static MessageBusImpl instance = new MessageBusImpl();
+	}
 
+	public static MessageBusImpl getInstance(){
+
+		return MessageBusImplHolder.instance;
+	}
 	private int counter=0; //counter for roundRubin
-	private static MessageBusImpl INSTANCE = null;
+
 	LinkedBlockingQueue<Message> messages;
 	HashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
 	HashMap<Class <? extends Message> ,Vector<MicroService>> typeMessage; // typeMessage for each microService
@@ -26,15 +33,13 @@ public class MessageBusImpl implements MessageBus {
 	public HashMap<Class<? extends Message>, Callback> callMap; //check the type in callBack
 
 	private MessageBusImpl (){
-		mapQueue = new HashMap();
 		messages = new LinkedBlockingQueue<Message>();
+		mapQueue = new HashMap<>();
+		typeMessage = new HashMap<>();
+		futureMap = new HashMap<>();
+		callMap = new HashMap<>();
 	}
 
-	public static MessageBusImpl getInstance(){
-		if(INSTANCE ==null)
-			INSTANCE = new MessageBusImpl();
-		return INSTANCE;
-	}
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m)
@@ -84,6 +89,14 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
 		messages.add(e);
+
+		while(!this.mapQueue.containsKey(e.getClass())) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException interruptedException) {
+				interruptedException.printStackTrace();
+			}
+		}
 
 		Message msg = messages.remove();
 		Future future = new Future();

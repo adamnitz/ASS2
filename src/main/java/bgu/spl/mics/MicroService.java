@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.passiveObjects.Diary;
+
 /**
  * The MicroService is an abstract class that any micro-service in the system
  * must extend. The abstract MicroService class is responsible to get and
@@ -21,6 +23,7 @@ package bgu.spl.mics;
 public abstract class MicroService implements Runnable {
 
     protected MessageBusImpl msgBus;
+    protected Diary d;
     String name;
     Boolean isFinish;
 
@@ -31,6 +34,7 @@ public abstract class MicroService implements Runnable {
     public MicroService(String name) {
     	this.name = name;
     	msgBus = MessageBusImpl.getInstance();
+    	d = Diary.getInstance();
     	isFinish= false;
     }
 
@@ -156,6 +160,7 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run() {
+        Diary d = Diary.getInstance();
         msgBus.register(this);
         this.initialize();
 
@@ -166,10 +171,8 @@ public abstract class MicroService implements Runnable {
 
 
             } catch (InterruptedException e) {
-              System.out.println("interruptException from awaitMessage");
-            }
-
-
+            System.out.println("interruptException from awaitMessage");
+        }
     }
 
 }

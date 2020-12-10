@@ -15,10 +15,14 @@ import java.util.Vector;
  */
 public class Ewoks {
 
-    private Vector <Ewok> ewoks = new Vector<Ewok>();
-    private static Ewoks INSTANCE = null;
+    private Vector <Ewok> ewoks;
 
-    public Ewoks(int numOfEwoks) {
+    private static class EwoksHolder{
+        private static Ewoks instance = new Ewoks(0);
+    }
+
+    private Ewoks(int numOfEwoks) {
+        ewoks = new Vector<>();
        for(int i=0; i<numOfEwoks;i++)
        {
            ewoks.add(new Ewok(i+1));
@@ -27,14 +31,9 @@ public class Ewoks {
 
 
     public static Ewoks getInstance(){
-        if(INSTANCE ==null)
-            INSTANCE = new Ewoks(0); //check
-        return INSTANCE;
+      return EwoksHolder.instance;
     }
 
-    public Vector<Ewok> getEwoks(){
-        return ewoks;
-    }
 
 
 
