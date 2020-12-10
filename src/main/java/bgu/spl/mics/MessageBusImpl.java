@@ -22,8 +22,8 @@ public class MessageBusImpl implements MessageBus {
 	LinkedBlockingQueue<Message> messages;
 	HashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
 	HashMap<Class <? extends Message> ,Vector<MicroService>> typeMessage; // typeMessage for each microService
-	HashMap<Event, Future<Boolean>> futureMap; //update futures
-	HashMap<Class<? extends Message>, Callback> callMap; //check the type in callBack
+	public HashMap<Event, Future<Boolean>> futureMap; //update futures
+	public HashMap<Class<? extends Message>, Callback> callMap; //check the type in callBack
 
 	private MessageBusImpl (){
 		mapQueue = new HashMap();

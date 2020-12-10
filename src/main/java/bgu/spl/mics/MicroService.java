@@ -20,7 +20,7 @@ package bgu.spl.mics;
  */
 public abstract class MicroService implements Runnable {
 
-    MessageBusImpl msgBus;
+    protected MessageBusImpl msgBus;
     String name;
     Boolean isFinish;
 
