@@ -6,10 +6,13 @@ import bgu.spl.mics.application.passiveObjects.*;
 
 import bgu.spl.mics.application.services.*;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 
 import java.awt.*;
 import java.awt.font.TextHitInfo;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /** This is the Main class of the application. You should parse the input file,
@@ -17,14 +20,18 @@ import java.io.IOException;
  * In the end, you should output a JSON.
  */
 public class Main {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		//reading Input
 
-		String input = args[1];
+		/*String input = args[1];
 		String output = args[2];
 
 		Input json = JsonInputReader.getInputFromJson(input);
-		System.out.println(json);
+		System.out.println(json);*/
+
+		final String inputPath = "./input.json";
+		Gson gson = new Gson();
+		Input json = gson.fromJson(new FileReader(inputPath),Input.class);
 
 		MessageBusImpl messageBus = MessageBusImpl.getInstance();
 		Ewoks ewoks = Ewoks.getInstance();
@@ -42,15 +49,23 @@ public class Main {
 		LandoMicroservice lando = new LandoMicroservice(json.getLando());
 		Thread landoT = new Thread(lando);
 
+		leiaT.start();
+		hanSoloT.start();
+		c3poT.start();
+		r2d2T.start();
+		landoT.start();
 
+		leiaT.join();
+		hanSoloT.join();
+		c3poT.join();
+		r2d2T.join();
+		landoT.join();
 
-
-		//	Diary diary = new Diary();
-		//Thread Leia = new Thread(LeiaMicroservice);
-		//Thread C3PO = new Thread(C3POMicroservice);
-		//Thread R2D2 = new Thread(R2D2Microservice);
-		//Thread HanSolo = new Thread(HanSoloMicroservice);
-		//Thread Lando = new Thread(LandoMicroservice);
+		Gson json1 = new GsonBuilder().setPrettyPrinting().create();
+		FileWriter writer = new FileWriter("./output1.json1");
+		json1.toJson(diary,writer);
+		writer.flush();
+		writer.close();
 
 
 
