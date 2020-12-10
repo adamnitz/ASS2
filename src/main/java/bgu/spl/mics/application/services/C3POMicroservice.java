@@ -23,12 +23,9 @@ import java.util.List;
  */
 public class C3POMicroservice extends MicroService  {
 
-    private MessageBus msgBus;
 
-
-    public C3POMicroservice(MessageBus messageBus) {
+    public C3POMicroservice() {
         super("C3PO");
-        this.msgBus = messageBus;
     }
 
     @Override

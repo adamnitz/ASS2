@@ -29,7 +29,7 @@ public class LeiaMicroservice extends MicroService implements Callback {
 
     private AttackEvent[] attacks;
 
-    public LeiaMicroservice(AttackEvent[] attacks, MessageBus messageBus) {
+    public LeiaMicroservice(AttackEvent[] attacks) {
         super("Leia");
         this.attacks = attacks;
     }

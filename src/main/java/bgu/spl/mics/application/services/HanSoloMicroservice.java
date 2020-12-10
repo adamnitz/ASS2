@@ -22,13 +22,8 @@ import java.util.List;
  */
 public class HanSoloMicroservice extends MicroService {
 
-    private MessageBus msgBus;
-
-
-    public HanSoloMicroservice(MessageBus messageBus) {
-
+    public HanSoloMicroservice() {
         super("Han");
-        this.msgBus = messageBus;
     }
 
 

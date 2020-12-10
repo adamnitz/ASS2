@@ -13,13 +13,11 @@ import bgu.spl.mics.application.messages.TerminationBroadcast;
  */
 public class LandoMicroservice  extends MicroService  {
 
-    private MessageBus msgBus;
     private long duration;
 
 
-    public LandoMicroservice(long duration,MessageBus messageBus) {
+    public LandoMicroservice(long duration) {
         super("Lando");
-        this.msgBus = messageBus;
         this.duration = duration;
 
     }

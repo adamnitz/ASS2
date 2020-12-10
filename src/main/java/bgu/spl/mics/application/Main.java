@@ -1,9 +1,10 @@
 package bgu.spl.mics.application;
 
 import bgu.spl.mics.MessageBusImpl;
+import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.passiveObjects.*;
 
-import bgu.spl.mics.application.services.LeiaMicroservice;
+import bgu.spl.mics.application.services.*;
 import com.google.gson.Gson;
 
 
@@ -30,7 +31,17 @@ public class Main {
 		ewoks.setEwoks(json.getEwoks());
 		Diary diary = Diary.getInstance();
 
-		LeiaMicroservice leia = new LeiaMicroservice(input)
+		LeiaMicroservice leia = new LeiaMicroservice((AttackEvent[]) json.getAttacks());//check casting
+		Thread leiaT = new Thread(leia);
+		HanSoloMicroservice hanSolo = new HanSoloMicroservice();
+		Thread hanSoloT = new Thread(hanSolo);
+		C3POMicroservice c3po = new C3POMicroservice();
+		Thread c3poT = new Thread(c3po);
+		R2D2Microservice r2d2 = new R2D2Microservice(json.getR2D2());
+		Thread r2d2T = new Thread(r2d2);
+		LandoMicroservice lando = new LandoMicroservice(json.getLando());
+		Thread landoT = new Thread(lando);
+
 
 
 
