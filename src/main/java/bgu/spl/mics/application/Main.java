@@ -23,12 +23,12 @@ public class Main {
 	public static void main(String[] args) throws IOException, InterruptedException {
 		//reading Input
 
-		/*String input = args[1];
+	/*	String input = args[1];
 		String output = args[2];
 
 		Input json = JsonInputReader.getInputFromJson(input);
-		System.out.println(json);*/
-
+		System.out.println(json);
+*/
 		final String inputPath = "./input.json";
 		Gson gson = new Gson();
 		Input json = gson.fromJson(new FileReader(inputPath),Input.class);
@@ -38,7 +38,7 @@ public class Main {
 		ewoks.setEwoks(json.getEwoks());
 		Diary diary = Diary.getInstance();
 
-		LeiaMicroservice leia = new LeiaMicroservice((AttackEvent[]) json.getAttacks());//check casting
+		LeiaMicroservice leia = new LeiaMicroservice(json.getAttacks());//check casting
 		Thread leiaT = new Thread(leia);
 		HanSoloMicroservice hanSolo = new HanSoloMicroservice();
 		Thread hanSoloT = new Thread(hanSolo);

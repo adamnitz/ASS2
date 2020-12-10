@@ -9,10 +9,12 @@ import java.util.List;
 import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
+import bgu.spl.mics.application.passiveObjects.Attack;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Input;
 import bgu.spl.mics.application.messages.DeactivationEvent;
 import bgu.spl.mics.application.messages.TerminationBroadcast;
+import jdk.jfr.internal.EventWriterMethod;
 
 
 import javax.security.auth.callback.Callback;
@@ -27,9 +29,10 @@ import javax.security.auth.callback.Callback;
  */
 public class LeiaMicroservice extends MicroService implements Callback {
 
-    private AttackEvent[] attacks;//check because of the main
+    private Attack[] attacks;//check because of the main
 
-    public LeiaMicroservice(AttackEvent[] attacks) {
+
+    public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
         this.attacks = attacks;
     }
@@ -39,7 +42,7 @@ public class LeiaMicroservice extends MicroService implements Callback {
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setLeiaTerminate();});
 
             for (int i = 0; i < attacks.length; i++)
-                sendEvent(attacks[i]);
+                sendEvent((AttackEvent)attacks[i]);
 
 
             for (int i = 0; i < msgBus.futureMap.size(); i++) {
