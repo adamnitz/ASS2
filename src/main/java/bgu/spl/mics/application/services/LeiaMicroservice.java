@@ -27,7 +27,7 @@ import javax.security.auth.callback.Callback;
  */
 public class LeiaMicroservice extends MicroService implements Callback {
 
-    private AttackEvent[] attacks;
+    private AttackEvent[] attacks;//check because of the main
 
     public LeiaMicroservice(AttackEvent[] attacks) {
         super("Leia");
