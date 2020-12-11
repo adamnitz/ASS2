@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
-import bgu.spl.mics.application.passiveObjects.Input;
 
 import java.util.Vector;
 

@@ -4,8 +4,10 @@ import bgu.spl.mics.application.messages.AttackEvent;
 
 
 import java.util.HashMap;
+import java.util.Queue;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,23 +26,18 @@ public class MessageBusImpl implements MessageBus {
 		return MessageBusImplHolder.instance;
 	}
 
-	private int counter; //counter for roundRubin
-	private int totalAttacks; //count total attacks of han solo and 3cpo
 
-	LinkedBlockingQueue<Message> messages;
-	ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
-	ConcurrentHashMap<Class <? extends Message> ,Vector<MicroService>> typeMessage; // typeMessage for each microService
-	public ConcurrentHashMap<Event, Future<Boolean>> futureMap; //update futures
-	public ConcurrentHashMap<Class<? extends Message>, Callback> callMap; //TODO:needs to be in different class
+	private ConcurrentLinkedQueue<Message> messages;
+	private ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
+	private ConcurrentHashMap<Class <? extends Message> ,LinkedBlockingQueue<MicroService>> typeMessage; // typeMessage for each microService
+	private ConcurrentHashMap<Event, Future> futureMap; //update futures
+	//public ConcurrentHashMap<Class<? extends Message>, Callback> callMap; //TODO:needs to be in microservice
 
 	private MessageBusImpl (){
-		messages = new LinkedBlockingQueue<Message>();
+		messages = new ConcurrentLinkedQueue<Message>();
 		mapQueue = new ConcurrentHashMap<>();
 		typeMessage = new ConcurrentHashMap<>();
 		futureMap = new ConcurrentHashMap<>();
-		callMap = new ConcurrentHashMap<>();
-		totalAttacks =0;
-		counter=0;
 	}
 
 
@@ -48,106 +45,110 @@ public class MessageBusImpl implements MessageBus {
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m)
 	{
 
-		if(typeMessage.get(type)== null)
+		LinkedBlockingQueue mQue = typeMessage.get(type);
+
+		if(mQue == null)
 		{
-			Vector<MicroService> whichMicro = new Vector<MicroService>();
-			typeMessage.put( type,whichMicro);
+			LinkedBlockingQueue whichMicro = new LinkedBlockingQueue<MicroService>();
+			typeMessage.put(type,whichMicro);
 		}
 
-		if(!typeMessage.get(type).contains(m))
-			typeMessage.get(type).add(m);
+		else if(!mQue.contains(m))
+		{
+			mQue.add(m);
+		}
 
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		if(typeMessage.get(type)== null)
+
+		LinkedBlockingQueue mQue = typeMessage.get(type);
+
+		if(mQue == null)
 		{
-			Vector<MicroService> whichMicro = new Vector<MicroService>();
+			LinkedBlockingQueue whichMicro = new LinkedBlockingQueue<MicroService>();
 			typeMessage.put(type,whichMicro);
 		}
 
-		if(!typeMessage.get(type).contains(m))
-			typeMessage.get(type).add(m);
+		else if(!mQue.contains(m))
+		{
+			mQue.add(m);
+		}
+
 	}
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		futureMap.get(e).resolve((Boolean) result);
+		futureMap.get(e).resolve(result);
 	}
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
+
 		messages.add(b);
-		Message msg;
-		synchronized (this)
+
+		Message msg = messages.remove();
+
+		LinkedBlockingQueue mQue = typeMessage.get(msg);
+
+		if(mQue!=null)
 		{
-			msg = messages.remove();
+			for(int i =0 ; i<mQue.size(); i ++)
+			{
+				mapQueue.get(i).add(msg);
+			}
 		}
 
-		Vector<MicroService> micro = typeMessage.get(msg.getClass());
-		for(int i=0; i <micro.size();i++)
-		{
-			mapQueue.get(micro.get(i)).add(msg);
-		}
 
-		notifyAll();
+		/*TODO:needTosynchronize
+		TODO:notifyAll
+		 */
 	}
 
 	
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
+
 		messages.add(e);
 
+		Message msg = messages.remove();
+
+		/*TODO:
 		while(!this.mapQueue.containsKey(e.getClass())) {
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException interruptedException) {
 				interruptedException.printStackTrace();
 			}
+
+			//OR CountDownLatch
+		 */
+
+		LinkedBlockingQueue<MicroService> mQue = typeMessage.get(msg);
+		MicroService first =  mQue.poll();
+
+		mapQueue.get(first).add(msg);
+		try {
+			mQue.put(first);
+		} catch (InterruptedException interruptedException) {
+			interruptedException.printStackTrace();
 		}
-
-		Message msg;
-		synchronized (this)
-		{
-			 msg = messages.remove();
-		}
-
-
-		if(msg.getClass()==AttackEvent.class)
-		{
-
-			Vector<MicroService> microVec = typeMessage.get(AttackEvent.class);
-			if(counter==microVec.size())
-				counter = 0;
-			 if (counter<microVec.size()) {
-				MicroService micro = microVec.get(counter);
-				mapQueue.get(micro).add(msg);
-				counter ++;
-			 }
-			 totalAttacks++;
-		}
-
-		else
-		{
-			Vector<MicroService> micro = typeMessage.get(msg.getClass());
-			for(int i=0; i <micro.size();i++)
-			{
-				mapQueue.get(micro.get(i)).add(msg);
-			}
-		}
-		Microservice ms1 = ....;
-		BlockingQueue msQ =mapQueue.get(ms1);
 
 		Future future = new Future();
-
 		futureMap.put(e,future);
+
+		/*Todo:
 		synchronized (msQ) {
 			msQ.put(msg);
 			msQ.notifyAll();
-		}
-        return future;//TODO:replace msg.getClass
+		 */
+
+		return future;
+
+
 	}
+
 
 	@Override
 	public void register(MicroService m) {
@@ -156,17 +157,32 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void unregister(MicroService m) {
-		mapQueue.remove(m);
+
+		LinkedBlockingQueue remQue = mapQueue.remove(m);
+
+		if(remQue!=null)
+		{
+			for(int i=0; i< remQue.size(); i ++)
+			{
+				remQue.remove();
+			}
+		}
+
 	}
 
 	@Override
 	public  Message awaitMessage(MicroService m) throws InterruptedException {
-		BlockingQueue msQ = mapQueue.get(m);
-		synchronized (msQ) {
-			while (msQ.isEmpty()) {
+		LinkedBlockingQueue msQ = mapQueue.get(m);
+
+		synchronized (msQ)
+		{
+			while (msQ.isEmpty())
+			{
+
 				try {
 					msQ.wait();
-				}catch (InterruptedException e){}
+				} catch (InterruptedException e){}
+
 			}
 			Message msg= mapQueue.get(m).remove();
 			return msg;
