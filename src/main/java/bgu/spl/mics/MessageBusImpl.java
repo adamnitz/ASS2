@@ -1,12 +1,9 @@
 package bgu.spl.mics;
 
-import bgu.spl.mics.application.messages.AttackEvent;
 
 
-import java.util.HashMap;
-import java.util.Queue;
-import java.util.Vector;
-import java.util.concurrent.BlockingQueue;
+
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;

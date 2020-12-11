@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.services;
 
 
-import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminationBroadcast;
@@ -10,7 +9,6 @@ import bgu.spl.mics.application.passiveObjects.Ewok;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
 
-import javax.swing.plaf.TableHeaderUI;
 import java.util.List;
 import java.util.Vector;
 

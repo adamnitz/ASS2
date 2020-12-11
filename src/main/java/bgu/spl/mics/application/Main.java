@@ -1,7 +1,6 @@
 package bgu.spl.mics.application;
 
 import bgu.spl.mics.MessageBusImpl;
-import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.passiveObjects.*;
 
 import bgu.spl.mics.application.services.*;
@@ -9,8 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 
-import java.awt.*;
-import java.awt.font.TextHitInfo;
+
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
