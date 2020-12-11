@@ -76,9 +76,13 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public synchronized void sendBroadcast(Broadcast b) {
+	public void sendBroadcast(Broadcast b) {
 		messages.add(b);
-		Message msg = messages.remove();
+		Message msg;
+		synchronized (this)
+		{
+			msg = messages.remove();
+		}
 
 		Vector<MicroService> micro = typeMessage.get(msg.getClass());
 		for(int i=0; i <micro.size();i++)
@@ -91,7 +95,7 @@ public class MessageBusImpl implements MessageBus {
 
 	
 	@Override
-	public synchronized <T> Future<T> sendEvent(Event<T> e) {
+	public <T> Future<T> sendEvent(Event<T> e) {
 		messages.add(e);
 
 		while(!this.mapQueue.containsKey(e.getClass())) {
@@ -102,7 +106,12 @@ public class MessageBusImpl implements MessageBus {
 			}
 		}
 
-		Message msg = messages.remove();
+		Message msg;
+		synchronized (this)
+		{
+			 msg = messages.remove();
+		}
+
 		Future future = new Future();
 
 		futureMap.put(e,future);
@@ -130,8 +139,8 @@ public class MessageBusImpl implements MessageBus {
 			}
 		}
 
-
 		notifyAll();
+
         return (Future<T>) futureMap.get(msg.getClass());
 	}
 
@@ -146,9 +155,9 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public synchronized Message awaitMessage(MicroService m) throws InterruptedException {
+	public  Message awaitMessage(MicroService m) throws InterruptedException {
 		if(!mapQueue.containsKey(m))
-			throw new IllegalStateException();
+			Thread.sleep(50);
 		while (mapQueue.get(m).isEmpty())
 		{
 			this.wait();
