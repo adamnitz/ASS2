@@ -2,10 +2,11 @@ package bgu.spl.mics.application.messages;
 import bgu.spl.mics.Event;
 import bgu.spl.mics.application.passiveObjects.Attack;
 
+import java.text.AttributedString;
 import java.util.List;
 
-public class AttackEvent extends Attack implements Event<Boolean>  {
-
+public class AttackEvent implements Event<Boolean>  {
+    private Attack attack;
 
     /**
      * Constructor.
@@ -13,8 +14,8 @@ public class AttackEvent extends Attack implements Event<Boolean>  {
      * @param serialNumbers
      * @param duration
      */
-    public AttackEvent(List<Integer> serialNumbers, int duration) {
-        super(serialNumbers, duration);
+    public AttackEvent(Attack attack) {
+        this.attack = attack;
     }
 
     public Event<Boolean> getEvent()
@@ -24,7 +25,7 @@ public class AttackEvent extends Attack implements Event<Boolean>  {
 
     public Attack getAttack()
     {
-        return this;
+        return this.attack;
     }
 
 

@@ -14,7 +14,7 @@ import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Input;
 import bgu.spl.mics.application.messages.DeactivationEvent;
 import bgu.spl.mics.application.messages.TerminationBroadcast;
-import jdk.jfr.internal.EventWriterMethod;
+
 
 
 import javax.security.auth.callback.Callback;
@@ -42,7 +42,7 @@ public class LeiaMicroservice extends MicroService implements Callback {
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setLeiaTerminate();});
 
             for (int i = 0; i < attacks.length; i++)
-                sendEvent((AttackEvent)attacks[i]);
+                sendEvent(new AttackEvent(attacks[i]));
 
 
             for (int i = 0; i < msgBus.futureMap.size(); i++) {
