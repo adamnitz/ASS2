@@ -148,7 +148,8 @@ public class MessageBusImpl implements MessageBus {
 		if(!mapQueue.containsKey(m))
 			throw new IllegalStateException();
 		while (mapQueue.get(m).isEmpty())
-			wait();
+				wait();
+
 
 		Message msg= mapQueue.get(m).remove();
 
