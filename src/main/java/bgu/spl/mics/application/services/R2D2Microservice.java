@@ -34,12 +34,11 @@ public class R2D2Microservice extends MicroService {
         subscribeEvent(DeactivationEvent.class,(event)-> {
             try {
                 Thread.sleep(duration);
+                complete(event, true);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            sendEvent(new BombDestroyerEvent());
-            d.setR2D2Deactivate();
         });
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setR2D2Terminate();});
 

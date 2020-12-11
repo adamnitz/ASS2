@@ -5,10 +5,13 @@ import java.time.DateTimeException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
+import bgu.spl.mics.Future;
 import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
+import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.passiveObjects.Attack;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Input;
@@ -30,31 +33,38 @@ import javax.security.auth.callback.Callback;
 public class LeiaMicroservice extends MicroService implements Callback {
 
     private Attack[] attacks;//check because of the main
+    Vector<Future> futArr;
 
 
     public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
         this.attacks = attacks;
+        futArr = new Vector<Future>();
     }
 
     @Override
     protected void initialize() {
-        subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setLeiaTerminate();});
+        subscribeBroadcast(TerminationBroadcast.class, (e) -> {
+            d.setLeiaTerminate();
+        });
 
-            for (int i = 0; i < attacks.length; i++)
-                sendEvent(new AttackEvent(attacks[i]));
+        for (int i = 0; i < attacks.length; i++) {
+            futArr.add(i, sendEvent(new AttackEvent(attacks[i])));
+        }
 
 
-            for (int i = 0; i < msgBus.futureMap.size(); i++) {
-                msgBus.futureMap.get(i).get();
-            }
+        for (int i = 0; i < futArr.size(); i++) {
+            futArr.get(i).get(); //check if all the attacks had finished
 
-            DeactivationEvent event = new DeactivationEvent();
-            sendEvent(event);
+
+            sendEvent(new DeactivationEvent());
+
+            sendEvent(new BombDestroyerEvent());
+            sendBroadcast(new TerminationBroadcast());
 
         }
 
 
-
+    }
 }
 

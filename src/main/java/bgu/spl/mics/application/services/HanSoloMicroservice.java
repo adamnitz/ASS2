@@ -6,10 +6,12 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminationBroadcast;
 import bgu.spl.mics.application.passiveObjects.Attack;
+import bgu.spl.mics.application.passiveObjects.Ewok;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
 
 import java.util.List;
+import java.util.Vector;
 
 
 /**
@@ -32,15 +34,17 @@ public class HanSoloMicroservice extends MicroService {
         subscribeEvent(AttackEvent.class,(event)-> {
             Attack attack = event.getAttack();
             List<Integer> serials = attack.getSerials();
-            Ewoks ewoks = Ewoks.getInstance();
+            Vector<Ewok> ewoks = Ewoks.getInstance().getEwoks();
 
-            for(int i=0; i<ewoks.getEwoks().size(); i++)
+            //checks ewoks availability
+
+            for(int i=0; i<ewoks.size(); i++)
             {
                 if(serials.get(i) == i+1)
                 {
-                    if (ewoks.getEwoks().get(i).getAvailable() == true)
+                    if (ewoks.get(i).getAvailable() == true)
                     {
-                        ewoks.getEwoks().get(i).acquire();//for how long
+                        ewoks.get(i).acquire();//for how long
                     }
                     else
                     {
@@ -57,10 +61,20 @@ public class HanSoloMicroservice extends MicroService {
 
             try {
                 Thread.sleep(event.getAttack().getDuration());
+                complete(event, true);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            //release the used ewoks
+            for(int i=0; i<serials.size(); i++)
+            {
+                ewoks.get(i+1).release();
+            }
+
+
             notifyAll();
+            d.setC3POFinish();
+
 
         });
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setHanSoloTerminate();});

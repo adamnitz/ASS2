@@ -27,13 +27,13 @@ public class LandoMicroservice  extends MicroService  {
        subscribeEvent(BombDestroyerEvent.class,(event)->{
            try {
                Thread.sleep(duration);
+               complete(event, true);
            } catch (InterruptedException e) {
                e.printStackTrace();
            }
        } );
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setLandoTerminate();});
 
-        sendBroadcast(new TerminationBroadcast());
     }
 
 
