@@ -76,7 +76,7 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public void sendBroadcast(Broadcast b) {
+	public synchronized void sendBroadcast(Broadcast b) {
 		messages.add(b);
 		Message msg = messages.remove();
 
@@ -85,11 +85,13 @@ public class MessageBusImpl implements MessageBus {
 		{
 			mapQueue.get(micro.get(i)).add(msg);
 		}
+
+		notifyAll();
 	}
 
 	
 	@Override
-	public <T> Future<T> sendEvent(Event<T> e) {
+	public synchronized <T> Future<T> sendEvent(Event<T> e) {
 		messages.add(e);
 
 		while(!this.mapQueue.containsKey(e.getClass())) {
@@ -144,19 +146,13 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public Message awaitMessage(MicroService m) throws InterruptedException {
+	public synchronized Message awaitMessage(MicroService m) throws InterruptedException {
 		if(!mapQueue.containsKey(m))
 			throw new IllegalStateException();
 		while (mapQueue.get(m).isEmpty())
 		{
-			synchronized (this)
-			{
-				this.wait();
-			}
+			this.wait();
 		}
-
-
-
 
 		Message msg= mapQueue.get(m).remove();
 
