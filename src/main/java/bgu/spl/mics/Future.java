@@ -19,6 +19,7 @@ public class Future<T> {
 	 */
 	public Future() {
 		isDone=false;
+		result = null;
 	}
 	
 	/**
@@ -33,15 +34,14 @@ public class Future<T> {
 
 		while(!isDone)
 		{
-			try
-			{
+			try {
 				this.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			catch (InterruptedException e){}
 		}
 
 		return result;
-
 	}
 	
 	/**
@@ -71,8 +71,21 @@ public class Future<T> {
      *         elapsed, return null.
      */
 	public T get(long timeout, TimeUnit unit) {
-		
-        return null;
+		if(isDone)
+			return result;
+		else
+		{
+			try {
+				this.wait(timeout, unit.ordinal());
+				return result;
+
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+
+
 	}
 
 }
