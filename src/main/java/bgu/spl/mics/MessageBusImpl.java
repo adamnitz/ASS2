@@ -47,17 +47,17 @@ public class MessageBusImpl implements MessageBus {
 
 		LinkedBlockingQueue mQue = typeMessage.get(type);
 
-		if(mQue == null)
-		{
-			LinkedBlockingQueue whichMicro = new LinkedBlockingQueue<MicroService>();
-			typeMessage.put(type,whichMicro);
+		synchronized (mQue) {
+			if (mQue == null)
+			{
+				LinkedBlockingQueue whichMicro = new LinkedBlockingQueue<MicroService>();
+				typeMessage.put(type, whichMicro);
+			}
+			else if (!mQue.contains(m))
+			{
+				mQue.add(m);
+			}
 		}
-
-		else if(!mQue.contains(m))
-		{
-			mQue.add(m);
-		}
-
 	}
 
 	@Override
@@ -65,17 +65,18 @@ public class MessageBusImpl implements MessageBus {
 
 		LinkedBlockingQueue mQue = typeMessage.get(type);
 
-		if(mQue == null)
-		{
-			LinkedBlockingQueue whichMicro = new LinkedBlockingQueue<MicroService>();
-			typeMessage.put(type,whichMicro);
-		}
+		synchronized (mQue) {
 
-		else if(!mQue.contains(m))
-		{
-			mQue.add(m);
+			if (mQue == null)
+			{
+				LinkedBlockingQueue whichMicro = new LinkedBlockingQueue<MicroService>();
+				typeMessage.put(type, whichMicro);
+			}
+			else if (!mQue.contains(m))
+			{
+				mQue.add(m);
+			}
 		}
-
 	}
 
 	@Override @SuppressWarnings("unchecked")
@@ -101,9 +102,9 @@ public class MessageBusImpl implements MessageBus {
 		}
 
 
-		/*TODO:needTosynchronize
-		TODO:notifyAll
-		 */
+		/*TODO:needTosynchronize*/
+		notifyAll();
+
 	}
 
 	
@@ -126,23 +127,22 @@ public class MessageBusImpl implements MessageBus {
 		 */
 
 		LinkedBlockingQueue<MicroService> mQue = typeMessage.get(msg);
-		MicroService first =  mQue.poll();
+		synchronized (mQue)
+		{
+			MicroService first = mQue.poll();
 
-		mapQueue.get(first).add(msg);
-		try {
-			mQue.put(first);
-		} catch (InterruptedException interruptedException) {
-			interruptedException.printStackTrace();
+			mapQueue.get(first).add(msg);
+			try {
+				mQue.put(first);
+			} catch (InterruptedException interruptedException) {
+				interruptedException.printStackTrace();
+			}
 		}
-
 		Future future = new Future();
 		futureMap.put(e,future);
 
-		/*Todo:
-		synchronized (msQ) {
-			msQ.put(msg);
-			msQ.notifyAll();
-		 */
+		notifyAll();
+
 
 		return future;
 
@@ -152,19 +152,22 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void register(MicroService m) {
-		mapQueue.put(m,new LinkedBlockingQueue<Message>());
+		synchronized (mapQueue) {
+			mapQueue.put(m, new LinkedBlockingQueue<Message>());
+		}
 	}
 
 	@Override
 	public void unregister(MicroService m) {
+		synchronized (mapQueue) {
+			LinkedBlockingQueue remQue = mapQueue.remove(m);
 
-		LinkedBlockingQueue remQue = mapQueue.remove(m);
-
-		if(remQue!=null)
-		{
-			for(int i=0; i< remQue.size(); i ++)
+			if (remQue != null)
 			{
-				remQue.remove();
+				for (int i = 0; i < remQue.size(); i++)
+				{
+					remQue.remove();
+				}
 			}
 		}
 
