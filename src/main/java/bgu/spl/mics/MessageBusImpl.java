@@ -5,6 +5,7 @@ import bgu.spl.mics.application.messages.AttackEvent;
 
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,7 +31,7 @@ public class MessageBusImpl implements MessageBus {
 	ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
 	ConcurrentHashMap<Class <? extends Message> ,Vector<MicroService>> typeMessage; // typeMessage for each microService
 	public ConcurrentHashMap<Event, Future<Boolean>> futureMap; //update futures
-	public ConcurrentHashMap<Class<? extends Message>, Callback> callMap; //check the type in callBack
+	public ConcurrentHashMap<Class<? extends Message>, Callback> callMap; //TODO:needs to be in different class
 
 	private MessageBusImpl (){
 		messages = new LinkedBlockingQueue<Message>();
@@ -112,9 +113,6 @@ public class MessageBusImpl implements MessageBus {
 			 msg = messages.remove();
 		}
 
-		Future future = new Future();
-
-		futureMap.put(e,future);
 
 		if(msg.getClass()==AttackEvent.class)
 		{
@@ -138,10 +136,17 @@ public class MessageBusImpl implements MessageBus {
 				mapQueue.get(micro.get(i)).add(msg);
 			}
 		}
+		Microservice ms1 = ....;
+		BlockingQueue msQ =mapQueue.get(ms1);
 
-		notifyAll();
+		Future future = new Future();
 
-        return (Future<T>) futureMap.get(msg.getClass());
+		futureMap.put(e,future);
+		synchronized (msQ) {
+			msQ.put(msg);
+			msQ.notifyAll();
+		}
+        return future;//TODO:replace msg.getClass
 	}
 
 	@Override
@@ -156,16 +161,15 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public  Message awaitMessage(MicroService m) throws InterruptedException {
-		if(!mapQueue.containsKey(m))
-			Thread.sleep(50);
-		while (mapQueue.get(m).isEmpty())
-		{
-			this.wait();
+		BlockingQueue msQ = mapQueue.get(m);
+		synchronized (msQ) {
+			while (msQ.isEmpty()) {
+				try {
+					msQ.wait();
+				}catch (InterruptedException e){}
+			}
+			Message msg= mapQueue.get(m).remove();
+			return msg;
 		}
-
-		Message msg= mapQueue.get(m).remove();
-
-
-		return msg;
 	}
 }
