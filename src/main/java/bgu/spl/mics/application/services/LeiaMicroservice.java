@@ -54,10 +54,14 @@ public class LeiaMicroservice extends MicroService implements Callback {
 
         }
 
-
+        // System.out.println("befor deactivation");
         for (int i = 0; i < futArr.size(); i++) {
+            System.out.println("befor deactivation");
+
             futArr.get(i).get(); //check if all the attacks had finished
             counterAttack++;
+
+
         }
         d.setTotalAttack(totalAttacks);
 

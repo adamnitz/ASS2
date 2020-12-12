@@ -174,15 +174,19 @@ public abstract class MicroService implements Runnable {
 
         while(!isFinish)
         {
+            System.out.println("/////");
             try {
                 Message msg=  msgBus.awaitMessage(this);
+                System.out.println("am i here?");
                 /*if(msg.getClass() == TerminationBroadcast.class)
                   {
                       terminate();
                    }
 
                  */
-                Callback callback = callMap.get(msg);
+
+
+                Callback callback = callMap.get(msg.getClass());
                 callback.call(msg);
 
 

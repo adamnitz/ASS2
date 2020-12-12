@@ -102,9 +102,9 @@ public class MessageBusImpl implements MessageBus {
 
         Message msg = messages.remove();
 
-        while (!this.typeMessage.containsKey(b.getClass())) {
+        if (!this.typeMessage.containsKey(b.getClass())) {
             try {
-                Thread.sleep(50);
+                Thread.sleep(1000);
             } catch (InterruptedException interruptedException) {
                 interruptedException.printStackTrace();
             }
@@ -127,13 +127,11 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
-
         messages.add(e);
 
         Message msg = messages.remove();
 
-        //TODO:CHECK
-        while (!this.typeMessage.containsKey(e.getClass())) {
+        if (!this.typeMessage.containsKey(e.getClass())) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException interruptedException) {
@@ -142,16 +140,23 @@ public class MessageBusImpl implements MessageBus {
         }
         //OR CountDownLatch
         LinkedBlockingQueue<MicroService> mQue = typeMessage.get(msg.getClass());
-
+        MicroService first;
         synchronized (mQue) {
-
-            MicroService first = mQue.poll();
+            System.out.println("m");
+            //MicroService first = mQue.poll();
+            first = mQue.poll();
             mapQueue.get(first).add(msg);
-
+            System.out.println(first+"first");
+            System.out.println(mapQueue.get(first).toString()+"thissssssssssss");
             //mQue.put(first)//noNeed
-            typeMessage.get(msg.getClass()).add(first);
+            synchronized (typeMessage) {
+                typeMessage.get(msg.getClass()).add(first);
+
+            }
             mQue.notifyAll();
+            //System.out.println(mapQueue.get(first).toString()+"is it empty?");
         }
+        System.out.println(mapQueue.get(first).toString()+"is it empty?");
         Future future = new Future();
         futureMap.put(e, future);
 
@@ -200,11 +205,24 @@ public class MessageBusImpl implements MessageBus {
 
 
         LinkedBlockingQueue msQ = mapQueue.get(m);
+        System.out.println(m+"m");
+        System.out.println(msQ+"msq+++++++++++");
 
-        System.out.println(msQ+"check...............");
 
+        if(msQ==null) {
+             try {
+                Thread.sleep(50);
+            } catch (InterruptedException interruptedException) {
+                interruptedException.printStackTrace();
+            }
+
+
+        }
         synchronized (msQ) {
+            System.out.println(msQ+"          msq");
+
             while (msQ.isEmpty()) {
+                System.out.println("herh?");
                 try {
                     System.out.println(Thread.currentThread().getName()+"AWAIT..................");
                     msQ.wait();

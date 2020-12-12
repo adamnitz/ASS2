@@ -9,6 +9,8 @@ import bgu.spl.mics.application.passiveObjects.Ewok;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
 
+import javax.sound.midi.Soundbank;
+import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Vector;
 
@@ -68,11 +70,12 @@ public class C3POMicroservice extends MicroService  {
                 //release the used ewoks
                 for(int i=0; i<serials.size(); i++)
                 {
-                   ewoks.get(i+1).release();
+                    ewoks.get(i).release();
                 }
 
 
-                notifyAll();
+
+                //notifyAll();
                 d.setC3POFinish();
 
             });

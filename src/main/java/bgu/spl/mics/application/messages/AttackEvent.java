@@ -25,7 +25,7 @@ public class AttackEvent implements Event<Boolean>  {
 
     public Attack getAttack()
     {
-        return this.attack;
+        return attack;
     }
 
 
