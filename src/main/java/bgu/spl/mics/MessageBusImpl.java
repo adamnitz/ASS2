@@ -159,21 +159,36 @@ public class MessageBusImpl implements MessageBus {
     @Override
     public void unregister(MicroService m) {
         synchronized (mapQueue) {
-            LinkedBlockingQueue remQue = mapQueue.remove(m);
+            LinkedBlockingQueue<Message> remQue = mapQueue.get(m);
+            System.out.println(remQue.size() + "xxxxxx");
 
-            if (remQue != null) {
+            if (!remQue.isEmpty()) {
                 for (int i = 0; i < remQue.size(); i++) {
+                    System.out.println("hey there");
                     remQue.remove();
                 }
             }
+            remQue.clear();
+
+            typeMessage.forEach((msg, microQue) -> {
+                LinkedBlockingQueue<MicroService> microQue2 = typeMessage.get(msg);
+                synchronized (microQue2) {
+                    microQue.remove(m);
+                }
+            });
+
+            System.out.println("unregister");
         }
+
+    }
+
 
         //TODO:NEED TO CHANGE THE MICRO REFERENCES
 
-        System.out.println("unregister");
 
 
-    }
+
+
 
     @Override
     public Message awaitMessage(MicroService m) throws InterruptedException {

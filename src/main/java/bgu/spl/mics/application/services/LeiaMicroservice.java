@@ -39,10 +39,9 @@ public class LeiaMicroservice extends MicroService implements Callback {
 
     @Override
     protected void initialize() {
-
-
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {
             d.setLeiaTerminate();
+            terminate();
         });
 
         System.out.println("lia subscrive,");
@@ -52,7 +51,7 @@ public class LeiaMicroservice extends MicroService implements Callback {
         } catch (InterruptedException e) {}
 
         for (int i = 0; i < attacks.length; i++) {
-            Future future = sendEvent(new AttackEvent(attacks[i]));
+            Future future= sendEvent(new AttackEvent(attacks[i]));
             futArr.add(i,future);
             System.out.println("The Event had sent");
 
@@ -61,7 +60,7 @@ public class LeiaMicroservice extends MicroService implements Callback {
         // System.out.println("befor deactivation");
         for (int i = 0; i < futArr.size(); i++) {
             System.out.println("befor deactivation");
-
+            System.out.println(futArr.get(i)+"       isnull");
             futArr.get(i).get(); //check if all the attacks had finished
             counterAttack++;
 
@@ -74,7 +73,7 @@ public class LeiaMicroservice extends MicroService implements Callback {
             sendEvent(new BombDestroyerEvent());
             sendBroadcast(new TerminationBroadcast());
 
-        terminate();
+
 
     }
 }

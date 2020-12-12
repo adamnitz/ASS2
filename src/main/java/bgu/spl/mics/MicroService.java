@@ -152,6 +152,7 @@ public abstract class MicroService implements Runnable {
     protected final void terminate()
     {
     	isFinish = true;
+        System.out.println(this.getName()+ "finish789");
     }
 
     /**
@@ -172,10 +173,10 @@ public abstract class MicroService implements Runnable {
         msgBus.register(this);
         this.initialize();
 
+
         while(!isFinish) {
            try {
                 Message msg = msgBus.awaitMessage(this);
-
                 Callback callback = callMap.get(msg.getClass());
                 callback.call(msg);
 
@@ -183,6 +184,8 @@ public abstract class MicroService implements Runnable {
             } catch (InterruptedException e) {
                 System.out.println("interruptException from awaitMessage");
             }
+
+
         }
         System.out.println("/////---------////////");
             msgBus.unregister(this);

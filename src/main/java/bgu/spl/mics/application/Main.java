@@ -62,10 +62,15 @@ public class Main {
 		leiaT.start();
 
 		hanSoloT.join();
+		System.out.println("hansolo finisg?");
 		c3poT.join();
+		System.out.println("c3po finisg?");
 		r2d2T.join();
+		System.out.println("r2d2 finisg?");
 		landoT.join();
+		System.out.println("lado finisg?");
 		leiaT.join();
+		System.out.println("lia finisg?");
 
 
 		Gson json1 = new GsonBuilder().setPrettyPrinting().create();
