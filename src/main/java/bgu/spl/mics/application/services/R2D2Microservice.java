@@ -37,8 +37,11 @@ public class R2D2Microservice extends MicroService {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            d.setR2D2Deactivate();
 
         });
+
+
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setR2D2Terminate();});
 
     }

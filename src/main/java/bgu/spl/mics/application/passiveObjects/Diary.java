@@ -45,6 +45,10 @@ public class Diary {
     }
 
 
+    public void setTotalAttack(int totalAttack)
+    {
+        this.totalAttack = totalAttack;
+    }
     public void setHanSoloFinish() {
         this.HanSoloFinish = System.currentTimeMillis();
     }
