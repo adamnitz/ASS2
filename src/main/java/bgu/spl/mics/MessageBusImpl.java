@@ -140,23 +140,23 @@ public class MessageBusImpl implements MessageBus {
         }
         //OR CountDownLatch
         LinkedBlockingQueue<MicroService> mQue = typeMessage.get(msg.getClass());
-        MicroService first;
         synchronized (mQue) {
-            System.out.println("m");
-            //MicroService first = mQue.poll();
+            MicroService first = mQue.poll();
             first = mQue.poll();
             mapQueue.get(first).add(msg);
-            System.out.println(first+"first");
-            System.out.println(mapQueue.get(first).toString()+"thissssssssssss");
-            //mQue.put(first)//noNeed
+            try {
+                mQue.put(first);
+            } catch (InterruptedException interruptedException) {
+                interruptedException.printStackTrace();
+            }
             synchronized (typeMessage) {
                 typeMessage.get(msg.getClass()).add(first);
 
             }
             mQue.notifyAll();
-            //System.out.println(mapQueue.get(first).toString()+"is it empty?");
+            System.out.println(mapQueue.get(first).toString()+"send event = im not empty?");
         }
-        System.out.println(mapQueue.get(first).toString()+"is it empty?");
+
         Future future = new Future();
         futureMap.put(e, future);
 
@@ -205,8 +205,7 @@ public class MessageBusImpl implements MessageBus {
 
 
         LinkedBlockingQueue msQ = mapQueue.get(m);
-        System.out.println(m+"m");
-        System.out.println(msQ+"msq+++++++++++");
+
 
 
         if(msQ==null) {
@@ -219,12 +218,12 @@ public class MessageBusImpl implements MessageBus {
 
         }
         synchronized (msQ) {
-            System.out.println(msQ+"          msq");
+
+            System.out.println(mapQueue.get(m).toString()+"await messsage = im empty");
 
             while (msQ.isEmpty()) {
-                System.out.println("herh?");
                 try {
-                    System.out.println(Thread.currentThread().getName()+"AWAIT..................");
+
                     msQ.wait();
 
                 } catch (InterruptedException e) {
