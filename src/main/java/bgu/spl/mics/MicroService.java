@@ -185,7 +185,6 @@ public abstract class MicroService implements Runnable {
 
                  */
 
-
                 Callback callback = callMap.get(msg.getClass());
                 callback.call(msg);
 

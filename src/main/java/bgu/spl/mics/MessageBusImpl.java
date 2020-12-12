@@ -97,16 +97,15 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void sendBroadcast(Broadcast b) {
-
-
         LinkedBlockingQueue eMicro = typeMessage.get(b);
 
         synchronized (eMicro) {
             for (int i = 0; i < eMicro.size(); i++) {
                 mapQueue.get(i).add(b);
+                mapQueue.get(i).notifyAll();
             }
-            eMicro.notifyAll();
         }
+
 
         System.out.println("sent Broadcast");
 

@@ -55,17 +55,18 @@ public class Main {
 		LandoMicroservice lando = new LandoMicroservice(json.getLando());
 		Thread landoT = new Thread(lando);
 		System.out.println(Thread.currentThread().getName()+"LANDO");
-		leiaT.start();
 		hanSoloT.start();
 		c3poT.start();
 		r2d2T.start();
 		landoT.start();
+		leiaT.start();
 
-		leiaT.join();
 		hanSoloT.join();
 		c3poT.join();
 		r2d2T.join();
 		landoT.join();
+		leiaT.join();
+
 
 		Gson json1 = new GsonBuilder().setPrettyPrinting().create();
 		FileWriter writer = new FileWriter("./output1.json1");
