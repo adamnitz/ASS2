@@ -102,18 +102,25 @@ public class MessageBusImpl implements MessageBus {
 
         Message msg = messages.remove();
 
+        while (!this.typeMessage.containsKey(b.getClass())) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException interruptedException) {
+                interruptedException.printStackTrace();
+            }
+        }
+
         LinkedBlockingQueue mQue = typeMessage.get(msg);
 
-        if (mQue != null) {
+        synchronized (mQue) {
             for (int i = 0; i < mQue.size(); i++) {
                 mapQueue.get(i).add(msg);
             }
+            mQue.notifyAll();
         }
 
         System.out.println("sent Broadcast");
 
-        /*TODO:needTosynchronize?*/
-        notifyAll();
 
     }
 
@@ -125,12 +132,9 @@ public class MessageBusImpl implements MessageBus {
 
         Message msg = messages.remove();
 
-        System.out.println("check1");
         //TODO:CHECK
         while (!this.typeMessage.containsKey(e.getClass())) {
-            System.out.println("check2");
             try {
-                System.out.println("check3");
                 Thread.sleep(50);
             } catch (InterruptedException interruptedException) {
                 interruptedException.printStackTrace();
@@ -138,9 +142,6 @@ public class MessageBusImpl implements MessageBus {
         }
         //OR CountDownLatch
         LinkedBlockingQueue<MicroService> mQue = typeMessage.get(msg.getClass());
-		if(mQue==null) {
-
-		}
 
         synchronized (mQue) {
 
