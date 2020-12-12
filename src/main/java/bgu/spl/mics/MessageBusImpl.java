@@ -21,14 +21,14 @@ public class MessageBusImpl implements MessageBus {
     }
 
 
-    private ConcurrentLinkedQueue<Message> messages;
+    //private ConcurrentLinkedQueue<Message> messages;
     private ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> mapQueue; // messages for each microService
     private ConcurrentHashMap<Class<? extends Message>, LinkedBlockingQueue<MicroService>> typeMessage; // typeMessage for each microService
     private ConcurrentHashMap<Event, Future> futureMap; //update futures
 
 
     private MessageBusImpl() {
-        messages = new ConcurrentLinkedQueue<Message>();
+        //messages = new ConcurrentLinkedQueue<Message>();
         mapQueue = new ConcurrentHashMap<>();
         typeMessage = new ConcurrentHashMap<>();
         futureMap = new ConcurrentHashMap<>();
@@ -98,75 +98,46 @@ public class MessageBusImpl implements MessageBus {
     @Override
     public void sendBroadcast(Broadcast b) {
 
-        messages.add(b);
 
-        Message msg = messages.remove();
+        LinkedBlockingQueue eMicro = typeMessage.get(b);
 
-        if (!this.typeMessage.containsKey(b.getClass())) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
+        synchronized (eMicro) {
+            for (int i = 0; i < eMicro.size(); i++) {
+                mapQueue.get(i).add(b);
             }
-        }
-
-        LinkedBlockingQueue mQue = typeMessage.get(msg);
-
-        synchronized (mQue) {
-            for (int i = 0; i < mQue.size(); i++) {
-                mapQueue.get(i).add(msg);
-            }
-            mQue.notifyAll();
+            eMicro.notifyAll();
         }
 
         System.out.println("sent Broadcast");
-
 
     }
 
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
-        messages.add(e);
+        LinkedBlockingQueue<MicroService> eMicro = typeMessage.get(e.getClass());
 
-        Message msg = messages.remove();
-
-        if (!this.typeMessage.containsKey(e.getClass())) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
-            }
+        //Pull first MS from eMicro, store, push back to the eMicro Q with roundRubin
+        MicroService firstMicro = null;
+        synchronized (eMicro)
+        {
+            if(eMicro.size()==0) return null;
+            firstMicro = eMicro.poll();
+           eMicro.add(firstMicro);//roundRubin
         }
-        //OR CountDownLatch
-        LinkedBlockingQueue<MicroService> mQue = typeMessage.get(msg.getClass());
-        synchronized (mQue) {
-            MicroService first = mQue.poll();
-            first = mQue.poll();
-            mapQueue.get(first).add(msg);
-            try {
-                mQue.put(first);
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
-            }
-            synchronized (typeMessage) {
-                typeMessage.get(msg.getClass()).add(first);
-
-            }
-            mQue.notifyAll();
-            System.out.println(mapQueue.get(first).toString()+"send event = im not empty?");
+        //Pull relevant Q of messages for Ms, sync and add the message, notifall all pending for this q.
+        LinkedBlockingQueue<Message> QforMs  = mapQueue.get(firstMicro);//addMsg
+        synchronized (QforMs) {
+            try{
+                QforMs.put(e);
+            } catch(InterruptedException exe){}
+            QforMs.notifyAll();
         }
-
+        //Create matching future for the event only if it was sent to someone and add to futureMap.
         Future future = new Future();
         futureMap.put(e, future);
 
-        System.out.println(Thread.currentThread().getName());
-
-
-
-
         return future;
-
 
     }
 
@@ -202,24 +173,15 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public Message awaitMessage(MicroService m) throws InterruptedException {
-
-
         LinkedBlockingQueue msQ = mapQueue.get(m);
 
-
-
         if(msQ==null) {
-             try {
-                Thread.sleep(50);
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
-            }
-
+             throw new RuntimeException("");
 
         }
         synchronized (msQ) {
 
-            System.out.println(mapQueue.get(m).toString()+"await messsage = im empty");
+            System.out.println(mapQueue.get(m).size()+"await messsage = im empty");
 
             while (msQ.isEmpty()) {
                 try {
