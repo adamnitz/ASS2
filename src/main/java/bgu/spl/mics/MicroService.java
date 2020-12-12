@@ -152,7 +152,7 @@ public abstract class MicroService implements Runnable {
     protected final void terminate()
     {
     	isFinish = true;
-        System.out.println(this.getName()+ "finish789");
+        System.out.println(this.getName() + " finished!");
     }
 
     /**
@@ -187,7 +187,6 @@ public abstract class MicroService implements Runnable {
 
 
         }
-        System.out.println("/////---------////////");
             msgBus.unregister(this);
    }
 

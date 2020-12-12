@@ -57,8 +57,6 @@ public class MessageBusImpl implements MessageBus {
             }
         }
 
-        System.out.println("subscribeEvent");
-
     }
 
     @Override
@@ -80,8 +78,6 @@ public class MessageBusImpl implements MessageBus {
             }
         }
 
-        //System.out.println("suscribe Broadcast");
-
 
     }
 
@@ -90,29 +86,26 @@ public class MessageBusImpl implements MessageBus {
     public <T> void complete(Event<T> e, T result) {
         futureMap.get(e).resolve(result);
 
-        System.out.println("complete");
-
-
     }
 
     @Override
     public void sendBroadcast(Broadcast b) {
-        LinkedBlockingQueue eMicro = typeMessage.get(b.getClass());
-        //System.out.println(b+"what the hell");
-        //Sy//stem.out.println(eMicro.size()+ "emicro");
+        LinkedBlockingQueue<MicroService> eMicro = typeMessage.get(b.getClass());
 
-            //if(eMicro.size()==0) throw new NullPointerException();/*return null*/;
-            for (int i = 0; i < eMicro.size(); i++) {
-                LinkedBlockingQueue<Message> currentMSQ=mapQueue.get(eMicro.poll());
-                synchronized ( currentMSQ){
-                    currentMSQ.add(b);
-                    currentMSQ.notifyAll();
+        int i=eMicro.size();
 
+        while(i>0) {
+            LinkedBlockingQueue<Message> currentMSQ = mapQueue.get(eMicro.poll());
+
+            synchronized (currentMSQ) {
+                currentMSQ.add(b);
+                currentMSQ.notifyAll();
             }
+
+            i--;
+
         }
 
-
-        System.out.println("sent Broadcast");
 
     }
 
@@ -152,19 +145,15 @@ public class MessageBusImpl implements MessageBus {
             mapQueue.put(m, new LinkedBlockingQueue<Message>());
         }
 
-        System.out.println("register");
-
     }
 
     @Override
     public void unregister(MicroService m) {
         synchronized (mapQueue) {
             LinkedBlockingQueue<Message> remQue = mapQueue.get(m);
-            System.out.println(remQue.size() + "xxxxxx");
 
             if (!remQue.isEmpty()) {
                 for (int i = 0; i < remQue.size(); i++) {
-                    System.out.println("hey there");
                     remQue.remove();
                 }
             }
@@ -177,7 +166,6 @@ public class MessageBusImpl implements MessageBus {
                 }
             });
 
-            System.out.println("unregister");
         }
 
     }
@@ -200,7 +188,6 @@ public class MessageBusImpl implements MessageBus {
         }
         synchronized (msQ) {
 
-            System.out.println(mapQueue.get(m).size() + "how many messages in m q");
 
             while (msQ.isEmpty()) {
                 try {
@@ -211,8 +198,8 @@ public class MessageBusImpl implements MessageBus {
                 }
 
             }
+
             Message msg = mapQueue.get(m).remove();
-            //System.out.println(msg+" ?????????????????");
             return msg;
         }
 

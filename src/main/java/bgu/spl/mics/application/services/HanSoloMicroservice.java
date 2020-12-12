@@ -38,9 +38,7 @@ public class HanSoloMicroservice extends MicroService {
             Attack attack = event.getAttack();
 
             List<Integer> serials = attack.getSerials();
-            System.out.println("here2?");
             Vector<Ewok> ewoks = Ewoks.getInstance().getEwoks();
-            System.out.println("here?");
             // checks ewoks availability
 
             for(int i=0; i<ewoks.size(); i++)
@@ -64,7 +62,6 @@ public class HanSoloMicroservice extends MicroService {
                 }
 
             }
-            System.out.println("tryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
 
             try {
                 Thread.sleep(event.getAttack().getDuration());
@@ -87,11 +84,10 @@ public class HanSoloMicroservice extends MicroService {
 
         });
 
-        System.out.println("hansolo subscrive,event");
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setHanSoloTerminate();
             terminate();
         });
-        System.out.println("hansolo subscrive, broadcast");
+
         d.setHanSoloFinish();
     }
 

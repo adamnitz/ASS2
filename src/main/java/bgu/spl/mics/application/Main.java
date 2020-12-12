@@ -54,7 +54,6 @@ public class Main {
 
 		LandoMicroservice lando = new LandoMicroservice(json.getLando());
 		Thread landoT = new Thread(lando);
-		System.out.println(Thread.currentThread().getName()+"LANDO");
 		hanSoloT.start();
 		c3poT.start();
 		r2d2T.start();
@@ -62,15 +61,10 @@ public class Main {
 		leiaT.start();
 
 		hanSoloT.join();
-		System.out.println("hansolo finisg?");
 		c3poT.join();
-		System.out.println("c3po finisg?");
 		r2d2T.join();
-		System.out.println("r2d2 finisg?");
 		landoT.join();
-		System.out.println("lado finisg?");
 		leiaT.join();
-		System.out.println("lia finisg?");
 
 
 		Gson json1 = new GsonBuilder().setPrettyPrinting().create();

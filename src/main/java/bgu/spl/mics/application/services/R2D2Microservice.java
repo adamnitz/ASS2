@@ -41,14 +41,13 @@ public class R2D2Microservice extends MicroService {
 
         });
 
-        System.out.println("R2D2 subscrive,");
 
 
 
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setR2D2Terminate();
             terminate();
         });
-        System.out.println("r2d2 subscrive, broadcasr");
+
     }
 
 }

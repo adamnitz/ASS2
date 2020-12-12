@@ -44,8 +44,6 @@ public class LeiaMicroservice extends MicroService implements Callback {
             terminate();
         });
 
-        System.out.println("lia subscrive,");
-
         try {
             Thread.sleep(50);
         } catch (InterruptedException e) {}
@@ -53,27 +51,22 @@ public class LeiaMicroservice extends MicroService implements Callback {
         for (int i = 0; i < attacks.length; i++) {
             Future future= sendEvent(new AttackEvent(attacks[i]));
             futArr.add(i,future);
-            System.out.println("The Event had sent");
 
         }
 
         // System.out.println("befor deactivation");
         for (int i = 0; i < futArr.size(); i++) {
-            System.out.println("befor deactivation");
-            System.out.println(futArr.get(i)+"       isnull");
             futArr.get(i).get(); //check if all the attacks had finished
             counterAttack++;
-
 
         }
         d.setTotalAttack(totalAttacks);
 
-            sendEvent(new DeactivationEvent());
-
-            sendEvent(new BombDestroyerEvent());
+            Future deactivateFuture = sendEvent(new DeactivationEvent());
+            deactivateFuture.get();
+            Future bombFuture = sendEvent(new BombDestroyerEvent());
+            bombFuture.get();
             sendBroadcast(new TerminationBroadcast());
-
-
 
     }
 }

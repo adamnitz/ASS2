@@ -33,12 +33,10 @@ public class LandoMicroservice  extends MicroService  {
            }
        } );
 
-        System.out.println("lando subscrive,event");
         subscribeBroadcast(TerminationBroadcast.class, (e) ->
         {d.setLandoTerminate();
             terminate();
         });
-        System.out.println("lando subscrive,broadcast");
     }
 
 

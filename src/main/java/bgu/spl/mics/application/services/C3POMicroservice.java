@@ -80,10 +80,8 @@ public class C3POMicroservice extends MicroService  {
 
             });
 
-        System.out.println("c3po subscrive, event");
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setC3POTerminate();
         terminate();});
-        System.out.println("c3po subscrive, broadcast");
         /*TODO:
 
          */
