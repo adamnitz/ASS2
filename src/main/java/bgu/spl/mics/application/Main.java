@@ -38,15 +38,23 @@ public class Main {
 
 		LeiaMicroservice leia = new LeiaMicroservice(json.getAttacks());//check casting
 		Thread leiaT = new Thread(leia);
+		System.out.println(Thread.currentThread().getName()+"LIA");
+
 		HanSoloMicroservice hanSolo = new HanSoloMicroservice();
 		Thread hanSoloT = new Thread(hanSolo);
+		System.out.println(Thread.currentThread().getName()+"HANSOLO");
+
 		C3POMicroservice c3po = new C3POMicroservice();
 		Thread c3poT = new Thread(c3po);
+		System.out.println(Thread.currentThread().getName()+"C3PO");
+
 		R2D2Microservice r2d2 = new R2D2Microservice(json.getR2D2());
 		Thread r2d2T = new Thread(r2d2);
+		System.out.println(Thread.currentThread().getName()+"R2D2");
+
 		LandoMicroservice lando = new LandoMicroservice(json.getLando());
 		Thread landoT = new Thread(lando);
-
+		System.out.println(Thread.currentThread().getName()+"LANDO");
 		leiaT.start();
 		hanSoloT.start();
 		c3poT.start();

@@ -35,7 +35,9 @@ public class Future<T> {
 		while(!isDone)
 		{
 			try {
-				this.wait();
+				synchronized (this) {
+					this.wait();
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -50,6 +52,9 @@ public class Future<T> {
 	public void resolve (T result) {
 		this.result = result;
 		isDone = true;
+		synchronized (this) {
+			this.notifyAll();
+		}
 	}
 	
 	/**

@@ -45,7 +45,7 @@ public class LeiaMicroservice extends MicroService implements Callback {
             d.setLeiaTerminate();
         });
 
-
+        System.out.println("lia subscrive,");
 
         for (int i = 0; i < attacks.length; i++) {
             Future future = sendEvent(new AttackEvent(attacks[i]));
@@ -65,6 +65,7 @@ public class LeiaMicroservice extends MicroService implements Callback {
 
             sendEvent(new BombDestroyerEvent());
             sendBroadcast(new TerminationBroadcast());
+
 
     }
 }

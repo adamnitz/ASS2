@@ -80,7 +80,7 @@ public class MessageBusImpl implements MessageBus {
             }
         }
 
-        System.out.println("suscribe Broadcast");
+        //System.out.println("suscribe Broadcast");
 
 
     }
@@ -127,7 +127,7 @@ public class MessageBusImpl implements MessageBus {
 
         System.out.println("check1");
         //TODO:CHECK
-        while (!this.mapQueue.containsKey(e.getClass())) {
+        while (!this.typeMessage.containsKey(e.getClass())) {
             System.out.println("check2");
             try {
                 System.out.println("check3");
@@ -137,24 +137,25 @@ public class MessageBusImpl implements MessageBus {
             }
         }
         //OR CountDownLatch
+        LinkedBlockingQueue<MicroService> mQue = typeMessage.get(msg.getClass());
+		if(mQue==null) {
 
+		}
 
-        LinkedBlockingQueue<MicroService> mQue = typeMessage.get(msg);
         synchronized (mQue) {
-            MicroService first = mQue.poll();
 
+            MicroService first = mQue.poll();
             mapQueue.get(first).add(msg);
-            try {
-                mQue.put(first);
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
-            }
+
+            //mQue.put(first)//noNeed
+            typeMessage.get(msg.getClass()).add(first);
+            mQue.notifyAll();
         }
         Future future = new Future();
         futureMap.put(e, future);
 
+        System.out.println(Thread.currentThread().getName());
 
-        notifyAll();
 
 
 
@@ -203,8 +204,8 @@ public class MessageBusImpl implements MessageBus {
 
         synchronized (msQ) {
             while (msQ.isEmpty()) {
-                    System.out.println("inwhile");
                 try {
+                    System.out.println(Thread.currentThread().getName()+"AWAIT..................");
                     msQ.wait();
 
                 } catch (InterruptedException e) {

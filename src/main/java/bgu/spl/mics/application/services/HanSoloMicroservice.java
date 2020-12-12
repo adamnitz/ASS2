@@ -77,7 +77,10 @@ public class HanSoloMicroservice extends MicroService {
 
 
         });
+
+        System.out.println("hansolo subscrive,event");
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setHanSoloTerminate();});
+        System.out.println("hansolo subscrive, broadcast");
         d.setHanSoloFinish();
     }
 
