@@ -172,27 +172,19 @@ public abstract class MicroService implements Runnable {
         msgBus.register(this);
         this.initialize();
 
-        while(!isFinish)
-        {
-            System.out.println("/////");
-            try {
-                Message msg=  msgBus.awaitMessage(this);
+        while(!isFinish) {
+           try {
+                Message msg = msgBus.awaitMessage(this);
                 System.out.println("am i here?");
-                /*if(msg.getClass() == TerminationBroadcast.class)
-                  {
-                      terminate();
-                   }
-
-                 */
 
                 Callback callback = callMap.get(msg.getClass());
                 callback.call(msg);
 
-
+               System.out.println("/////");
             } catch (InterruptedException e) {
                 System.out.println("interruptException from awaitMessage");
+            }
         }
-
             msgBus.unregister(this);
    }
 
@@ -202,4 +194,4 @@ public abstract class MicroService implements Runnable {
 
     }
 
-}
+

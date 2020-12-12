@@ -97,12 +97,17 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void sendBroadcast(Broadcast b) {
-        LinkedBlockingQueue eMicro = typeMessage.get(b);
+        LinkedBlockingQueue eMicro = typeMessage.get(b.getClass());
+        //System.out.println(b+"what the hell");
+        //Sy//stem.out.println(eMicro.size()+ "emicro");
 
-        synchronized (eMicro) {
+            //if(eMicro.size()==0) throw new NullPointerException();/*return null*/;
             for (int i = 0; i < eMicro.size(); i++) {
-                mapQueue.get(i).add(b);
-                mapQueue.get(i).notifyAll();
+                LinkedBlockingQueue<Message> currentMSQ=mapQueue.get(eMicro.poll());
+                synchronized ( currentMSQ){
+                    currentMSQ.add(b);
+                    currentMSQ.notifyAll();
+
             }
         }
 
@@ -180,7 +185,7 @@ public class MessageBusImpl implements MessageBus {
         }
         synchronized (msQ) {
 
-            System.out.println(mapQueue.get(m).size()+"await messsage = im empty");
+            System.out.println(mapQueue.get(m).size() + "how many messages in m q");
 
             while (msQ.isEmpty()) {
                 try {
@@ -192,9 +197,9 @@ public class MessageBusImpl implements MessageBus {
 
             }
             Message msg = mapQueue.get(m).remove();
+            //System.out.println(msg+" ?????????????????");
             return msg;
         }
 
-       // System.out.println("AwaitMessage");
     }
 }
