@@ -74,6 +74,7 @@ public class LeiaMicroservice extends MicroService implements Callback {
             sendEvent(new BombDestroyerEvent());
             sendBroadcast(new TerminationBroadcast());
 
+        terminate();
 
     }
 }
