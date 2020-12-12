@@ -112,16 +112,16 @@ public class MessageBusImpl implements MessageBus {
 
 		Message msg = messages.remove();
 
-		/*TODO:
+		//TODO:CHECK
 		while(!this.mapQueue.containsKey(e.getClass())) {
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException interruptedException) {
 				interruptedException.printStackTrace();
 			}
-
+		}
 			//OR CountDownLatch
-		 */
+
 
 		LinkedBlockingQueue<MicroService> mQue = typeMessage.get(msg);
 		synchronized (mQue)

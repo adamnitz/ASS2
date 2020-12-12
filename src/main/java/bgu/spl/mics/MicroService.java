@@ -30,6 +30,7 @@ public abstract class MicroService implements Runnable {
     private String name;
     boolean isFinish = false;
     private ConcurrentHashMap<Class<? extends Message>, Callback> callMap;
+    protected int totalAttacks;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -

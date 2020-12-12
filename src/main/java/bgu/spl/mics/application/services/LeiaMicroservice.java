@@ -27,12 +27,14 @@ public class LeiaMicroservice extends MicroService implements Callback {
 
     private Attack[] attacks;//check because of the main
     Vector<Future> futArr;
+    int counterAttack;
 
 
     public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
         this.attacks = attacks;
         futArr = new Vector<Future>();
+        counterAttack=0;
     }
 
     @Override
@@ -48,14 +50,15 @@ public class LeiaMicroservice extends MicroService implements Callback {
 
         for (int i = 0; i < futArr.size(); i++) {
             futArr.get(i).get(); //check if all the attacks had finished
-
+            counterAttack++;
+        }
 
             sendEvent(new DeactivationEvent());
 
             sendEvent(new BombDestroyerEvent());
             sendBroadcast(new TerminationBroadcast());
 
-        }
+
 
 
     }
