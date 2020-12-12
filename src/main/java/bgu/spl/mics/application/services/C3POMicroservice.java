@@ -62,6 +62,8 @@ public class C3POMicroservice extends MicroService  {
                 try {
                     Thread.sleep(event.getAttack().getDuration());
                     complete(event, true);
+                    d.setTotalAttack(totalAttacks);
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

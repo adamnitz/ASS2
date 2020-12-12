@@ -34,7 +34,6 @@ public class LeiaMicroservice extends MicroService implements Callback {
         super("Leia");
         this.attacks = attacks;
         futArr = new Vector<Future>();
-        counterAttack=0;
     }
 
     @Override
@@ -57,10 +56,7 @@ public class LeiaMicroservice extends MicroService implements Callback {
         // System.out.println("befor deactivation");
         for (int i = 0; i < futArr.size(); i++) {
             futArr.get(i).get(); //check if all the attacks had finished
-            counterAttack++;
-
         }
-        d.setTotalAttack(totalAttacks);
 
             Future deactivateFuture = sendEvent(new DeactivationEvent());
             deactivateFuture.get();

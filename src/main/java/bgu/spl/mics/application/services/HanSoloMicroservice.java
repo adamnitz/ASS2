@@ -66,6 +66,7 @@ public class HanSoloMicroservice extends MicroService {
             try {
                 Thread.sleep(event.getAttack().getDuration());
                 complete(event, true);
+                d.setTotalAttack(totalAttacks);
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
