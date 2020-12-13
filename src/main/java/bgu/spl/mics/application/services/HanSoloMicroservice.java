@@ -9,6 +9,7 @@ import bgu.spl.mics.application.passiveObjects.Ewok;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
@@ -39,6 +40,7 @@ public class HanSoloMicroservice extends MicroService {
             List<Integer> serials = attack.getSerials();
             Vector<Ewok> ewoks = Ewoks.getInstance().getEwoks();
             // checks ewoks availability
+
 
             for(int i=0; i<ewoks.size(); i++)
             {
