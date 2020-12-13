@@ -25,7 +25,7 @@ public class Ewoks {
         ewoks = new Vector<>();
 
     }
-
+    public void empty(){ewoks = new Vector<>();} //TODO: remove
     public void setEwoks(int numOfEwoks) {
         for(int i=0; i<numOfEwoks;i++)
         {

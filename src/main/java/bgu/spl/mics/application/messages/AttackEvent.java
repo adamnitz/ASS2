@@ -18,10 +18,6 @@ public class AttackEvent implements Event<Boolean>  {
         this.attack = attack;
     }
 
-    public Event<Boolean> getEvent()
-    {
-        return this;
-    }
 
     public Attack getAttack()
     {

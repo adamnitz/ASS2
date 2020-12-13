@@ -85,7 +85,6 @@ public class MessageBusImpl implements MessageBus {
     @SuppressWarnings("unchecked")
     public <T> void complete(Event<T> e, T result) {
         futureMap.get(e).resolve(result);
-
     }
 
     @Override
@@ -114,27 +113,26 @@ public class MessageBusImpl implements MessageBus {
     public <T> Future<T> sendEvent(Event<T> e) {
         LinkedBlockingQueue<MicroService> eMicro = typeMessage.get(e.getClass());
 
-        //Pull first MS from eMicro, store, push back to the eMicro Q with roundRubin
         MicroService firstMicro = null;
+        if(eMicro == null)
+            return null;
         synchronized (eMicro)
         {
             if(eMicro.size()==0) return null;
             firstMicro = eMicro.poll();
            eMicro.add(firstMicro);//roundRubin
         }
-        //Pull relevant Q of messages for Ms, sync and add the message, notifall all pending for this q.
+
         LinkedBlockingQueue<Message> QforMs  = mapQueue.get(firstMicro);//addMsg
         synchronized (QforMs) {
             try{
                 QforMs.put(e);
             } catch(InterruptedException exe){}
             QforMs.notifyAll();
+            Future future = new Future();
+            futureMap.put(e, future);
+            return future;
         }
-        //Create matching future for the event only if it was sent to someone and add to futureMap.
-        Future future = new Future();
-        futureMap.put(e, future);
-
-        return future;
 
     }
 
@@ -149,26 +147,22 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void unregister(MicroService m) {
-        synchronized (mapQueue) {
-            LinkedBlockingQueue<Message> remQue = mapQueue.get(m);
-
-            if (!remQue.isEmpty()) {
-                for (int i = 0; i < remQue.size(); i++) {
-                    remQue.remove();
-                }
-            }
-            remQue.clear();
-
+        synchronized (typeMessage) {
+           // LinkedBlockingQueue<Message> remQue = mapQueue.get(m);
             typeMessage.forEach((msg, microQue) -> {
-                LinkedBlockingQueue<MicroService> microQue2 = typeMessage.get(msg);
-                synchronized (microQue2) {
+                synchronized (microQue) {
                     microQue.remove(m);
                 }
-            });
+            });}
+            synchronized (mapQueue) {
+                mapQueue.remove(m);
+            }
+
 
         }
 
-    }
+
+
 
 
         //TODO:NEED TO CHANGE THE MICRO REFERENCES
@@ -180,26 +174,20 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public Message awaitMessage(MicroService m) throws InterruptedException {
-        LinkedBlockingQueue msQ = mapQueue.get(m);
+        LinkedBlockingQueue<Message> msQ = mapQueue.get(m);
 
         if(msQ==null) {
-             throw new RuntimeException("");
-
+             throw new RuntimeException("");//TODO: make sure what should we have here
         }
+
         synchronized (msQ) {
-
-
             while (msQ.isEmpty()) {
                 try {
-
                     msQ.wait();
-
                 } catch (InterruptedException e) {
                 }
-
             }
-
-            Message msg = mapQueue.get(m).remove();
+            Message msg = msQ.remove();
             return msg;
         }
 

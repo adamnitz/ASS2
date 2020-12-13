@@ -3,6 +3,8 @@ package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.MessageBusImpl;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Passive data-object representing a Diary - in which the flow of the battle is recorded.
  * We are going to compare your recordings with the expected recordings, and make sure that your output makes sense.
@@ -16,7 +18,7 @@ public class Diary {
     }
 
 
-    private int totalAttack ;
+    private AtomicInteger totalAttack ;
     private long HanSoloFinish;
     private long C3POFinish;
     private long R2D2Deactivate;
@@ -29,7 +31,7 @@ public class Diary {
     private Diary()
     {
 
-        totalAttack = 0;
+        totalAttack = new AtomicInteger(0);
         HanSoloFinish = 0;
         C3POFinish = 0;
         R2D2Deactivate = 0;
@@ -45,9 +47,9 @@ public class Diary {
     }
 
 
-    public void setTotalAttack(int totalAttack)
+    public void setTotalAttack()
     {
-        this.totalAttack++;
+        this.totalAttack.incrementAndGet();
     }
     public void setHanSoloFinish() {
         this.HanSoloFinish = System.currentTimeMillis();
@@ -82,7 +84,7 @@ public class Diary {
     }
 
     public int getTotalAttack(){
-        return totalAttack;
+        return totalAttack.get();
     }
 
     public long getHanSoloFinish(){
@@ -116,4 +118,5 @@ public class Diary {
     public long getLandoTerminate() {
         return LandoTerminate;
     }
+    public void resetNumberOfAttackes(){this.totalAttack = new AtomicInteger(0);}//TODO: delete
 }

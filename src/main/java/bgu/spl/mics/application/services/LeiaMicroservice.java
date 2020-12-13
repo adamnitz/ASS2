@@ -44,7 +44,7 @@ public class LeiaMicroservice extends MicroService implements Callback {
         });
 
         try {
-            Thread.sleep(50);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {}
 
         for (int i = 0; i < attacks.length; i++) {
