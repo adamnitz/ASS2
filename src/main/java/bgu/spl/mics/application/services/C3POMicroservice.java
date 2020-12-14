@@ -47,17 +47,9 @@ public class C3POMicroservice extends MicroService  {
                 {
                     // System.out.println("check for");
                     while(j< serials.size() && !found) {
-
                         if (serials.get(j) == i + 1) {
-                            if (ewoks.get(i).getAvailable() == true) {
-                                ewoks.get(i).acquire();//for how long
-                                found = true;
-                            } else {
-                                try {
-                                    this.wait();
-                                } catch (InterruptedException e) {
-                                }
-                            }
+                            ewoks.get(i).acquire();
+                            found = true;
                         }
 
                         if(found)
@@ -65,8 +57,8 @@ public class C3POMicroservice extends MicroService  {
                         else
                             i++;
                     }
-                    found = false;
 
+                    found = false;
                 }
 
                 try {
@@ -85,9 +77,6 @@ public class C3POMicroservice extends MicroService  {
                     ewoks.get(i).release();
                 }
 
-
-
-                //notifyAll();
                 d.setC3POFinish();
 
             });

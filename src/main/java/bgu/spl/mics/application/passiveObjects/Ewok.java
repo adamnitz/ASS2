@@ -19,14 +19,24 @@ public class Ewok {
      * Acquires an Ewok
      */
     public synchronized void acquire() {
-		available =true;
+        if (available)
+		    available =false;
+        else {
+            if(!available) {
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                }
+            }
+        }
     }
 
     /**
      * release an Ewok
      */
     public synchronized void release() {
-    	available=false;
+    	available=true;
+    	notifyAll();
     }
 
     public int getSerialNumber()

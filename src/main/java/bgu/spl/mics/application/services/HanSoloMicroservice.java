@@ -47,19 +47,11 @@ public class HanSoloMicroservice extends MicroService {
 
             for(int i=0; i<ewoks.size(); i++)
             {
-               // System.out.println("check for");
+                // System.out.println("check for");
                 while(j< serials.size() && !found) {
-
                     if (serials.get(j) == i + 1) {
-                        if (ewoks.get(i).getAvailable() == true) {
-                            ewoks.get(i).acquire();//for how long
-                            found = true;
-                        } else {
-                            try {
-                                this.wait();
-                            } catch (InterruptedException e) {
-                            }
-                        }
+                        ewoks.get(i).acquire();
+                        found = true;
                     }
 
                     if(found)
@@ -67,9 +59,10 @@ public class HanSoloMicroservice extends MicroService {
                     else
                         i++;
                 }
-                found = false;
 
+                found = false;
             }
+
 
             try {
                 Thread.sleep(event.getAttack().getDuration());
@@ -82,12 +75,9 @@ public class HanSoloMicroservice extends MicroService {
             //release the used ewoks
             for(int i=0; i<serials.size(); i++)
             {
-
                 ewoks.get(i).release();
             }
 
-
-            //notifyAll();
             d.setC3POFinish();
 
 
