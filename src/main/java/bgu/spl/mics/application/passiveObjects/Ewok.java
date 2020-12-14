@@ -19,6 +19,7 @@ public class Ewok {
      * Acquires an Ewok
      */
     public synchronized void acquire() {
+
         if (available)
 		    available =false;
         else {
@@ -28,7 +29,9 @@ public class Ewok {
                 } catch (InterruptedException e) {
                 }
             }
+
         }
+
     }
 
     /**

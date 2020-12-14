@@ -59,9 +59,13 @@ public class C3POMicroservice extends MicroService  {
                     }
 
                     found = false;
+
                 }
 
+
+
                 try {
+
                     Thread.sleep(event.getAttack().getDuration());
                     complete(event, true);
                     d.setTotalAttack();
@@ -75,6 +79,7 @@ public class C3POMicroservice extends MicroService  {
                 for(int i=0; i<serials.size(); i++)
                 {
                     ewoks.get(i).release();
+
                 }
 
                 d.setC3POFinish();
