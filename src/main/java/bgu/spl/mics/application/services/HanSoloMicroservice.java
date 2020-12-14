@@ -41,7 +41,7 @@ public class HanSoloMicroservice extends MicroService {
             Vector<Ewok> ewoks = Ewoks.getInstance().getEwoks();
             // checks ewoks availability
 
-
+            serials.sort(Comparator.comparing(Integer::intValue));
             for(int i=0; i<ewoks.size(); i++)
             {
                // System.out.println("check for");

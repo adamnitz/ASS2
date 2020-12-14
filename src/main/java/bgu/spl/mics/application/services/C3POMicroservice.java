@@ -38,6 +38,7 @@ public class C3POMicroservice extends MicroService  {
             List<Integer> serials = attack.getSerials();
             Vector<Ewok> ewoks = Ewoks.getInstance().getEwoks();
 
+            serials.sort(Comparator.comparing(Integer::intValue));
             //checks ewoks availability
             for(int i=0; i<ewoks.size(); i++)
             {
