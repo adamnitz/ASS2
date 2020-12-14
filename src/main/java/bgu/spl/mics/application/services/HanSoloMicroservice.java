@@ -41,25 +41,36 @@ public class HanSoloMicroservice extends MicroService {
             Vector<Ewok> ewoks = Ewoks.getInstance().getEwoks();
             // checks ewoks availability
 
-            serials.sort(Comparator.comparing(Integer::intValue));
+
+            boolean found = false;
+            int j=0;
+
             for(int i=0; i<ewoks.size(); i++)
             {
                // System.out.println("check for");
-                if(serials.get(i) == i+1)
-                {
-                    if (ewoks.get(i).getAvailable() == true)
-                    {
-                        ewoks.get(i).acquire();//for how long
-                    }
-                    else
-                    {
-                        try{
-                            this.wait();
+                while(j< serials.size() && !found) {
+
+                    if (serials.get(j) == i + 1) {
+                        if (ewoks.get(i).getAvailable() == true) {
+                            ewoks.get(i).acquire();//for how long
+                            found = true;
+                        } else {
+                            try {
+                                this.wait();
+                            } catch (InterruptedException e) {
+                            }
                         }
-                        catch(InterruptedException e){}
                     }
+
+                    if(found)
+                        j++;
+                    else
+                        i++;
                 }
+                found = false;
+
             }
+
             try {
                 Thread.sleep(event.getAttack().getDuration());
                 complete(event, true);
