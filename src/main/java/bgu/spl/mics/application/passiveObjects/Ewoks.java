@@ -23,9 +23,14 @@ public class Ewoks {
 
     private Ewoks() {
         ewoks = new Vector<>();
-
     }
+
     public void empty(){ewoks = new Vector<>();} //TODO: remove
+
+    /**
+     * building the list of our ewoks
+     * @param numOfEwoks - the number of Ewoks in our list
+     */
     public void setEwoks(int numOfEwoks) {
         for(int i=0; i<numOfEwoks;i++)
         {
@@ -33,6 +38,10 @@ public class Ewoks {
         }
     }
 
+    /**
+     *
+     * @return the only instance of ewoks
+     */
     public static Ewoks getInstance(){
       return EwoksHolder.instance;
     }

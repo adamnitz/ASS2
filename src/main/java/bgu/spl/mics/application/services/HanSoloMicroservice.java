@@ -23,70 +23,68 @@ import java.util.Vector;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class HanSoloMicroservice extends MicroService {
-
+    /**
+     * Constructor
+     */
     public HanSoloMicroservice() {
         super("Han");
     }
 
-
     @Override
+    /**
+     * suscribe HanSolo to attackEvent and termination broadcast
+     * define the callBacks of those messages:
+     * AttackEvent: check the needed ewoks availability and aquired them,
+     * sleep(execute the attack)
+     * when he finish, he realeses the ewoks.
+     * terminathionBroadcast: set HanSolo Termination time
+     */
     protected void initialize() {
-
-
         subscribeEvent(AttackEvent.class,(event)-> {
+            System.out.println("hanSolo startedAttack");
 
             Attack attack = event.getAttack();
-
             List<Integer> serials = attack.getSerials();
             Vector<Ewok> ewoks = Ewoks.getInstance().getEwoks();
-            // checks ewoks availability
-
 
             boolean found = false;
             int j=0;
+            int i=0;
 
-            for(int i=0; i<ewoks.size(); i++)
-            {
-                // System.out.println("check for");
+            while(i<ewoks.size()){
                 while(j< serials.size() && !found) {
                     if (serials.get(j) == i + 1) {
                         ewoks.get(i).acquire();
                         found = true;
-                    }
-
-                    if(found)
                         j++;
-                    else
-                        i++;
+                    }
+                    i++;
                 }
 
                 found = false;
-            }
 
+            }
 
             try {
                 Thread.sleep(event.getAttack().getDuration());
                 complete(event, true);
+                System.out.println("hanSolo finish attack");
                 d.setTotalAttack();
-
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
             //release the used ewoks
-            for(int i=0; i<serials.size(); i++)
-            {
-                ewoks.get(i).release();
+            for(int k=0; k<serials.size(); k++){
+                ewoks.get(k).release();
             }
-
-            d.setC3POFinish();
-
-
+            d.setHanSoloFinish();
         });
 
-        subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setHanSoloTerminate();
-            terminate();
-        });
-
-        d.setHanSoloFinish();
+        subscribeBroadcast(TerminationBroadcast.class, (e) ->
+        {d.setHanSoloTerminate();
+            terminate();});
+        d.setHanSoloFinish();// check if here
     }
 }

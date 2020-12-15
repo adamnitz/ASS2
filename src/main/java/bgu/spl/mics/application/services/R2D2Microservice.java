@@ -19,14 +19,21 @@ public class R2D2Microservice extends MicroService {
 
     private long duration;
 
-
+    /**Constructor
+     * @param duration - the duration of the bombDestroy
+     */
     public R2D2Microservice(long duration)
     {
         super("R2D2");
         this.duration = duration;
     }
 
-
+    /**
+     * suscribe R2D2 to R2D2DeactivationEvent and termination broadcast
+     * define the callBacks of those messages:
+     * * DeactivationEvent:sleep(execute the attack)
+     * * terminationBroadcast: set R2D2 Termination time
+     */
     protected void initialize() {
 
         Diary d = Diary.getInstance();
@@ -38,11 +45,7 @@ public class R2D2Microservice extends MicroService {
                 e.printStackTrace();
             }
             d.setR2D2Deactivate();
-
         });
-
-
-
 
         subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setR2D2Terminate();
             terminate();

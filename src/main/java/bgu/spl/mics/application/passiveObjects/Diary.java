@@ -17,7 +17,6 @@ public class Diary {
         private static Diary instance = new Diary();
     }
 
-
     private AtomicInteger totalAttack ;
     private long HanSoloFinish;
     private long C3POFinish;
@@ -42,6 +41,10 @@ public class Diary {
         LandoTerminate = 0;
     }
 
+    /**return the only instance of the diary
+     *
+     * @return
+     */
     public static Diary getInstance(){
         return DiaryHolder.instance;
     }

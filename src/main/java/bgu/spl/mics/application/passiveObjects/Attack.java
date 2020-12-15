@@ -15,7 +15,9 @@ public class Attack {
     final int duration;
 
     /**
-     * Constructor.
+     * Constructor Attack
+     * SerialNumbers - the Ewoks we need
+     * duration - the duration of TheAttack
      */
     public Attack(List<Integer> serialNumbers, int duration) {
         serialNumbers.sort(Comparator.naturalOrder());
@@ -23,11 +25,19 @@ public class Attack {
         this.duration = duration;
     }
 
+    /** get the Serials
+     *
+     * @return serials
+     */
     public List<Integer> getSerials()
     {
         return serials;
     }
 
+    /** get The duration
+     *
+     * @return serials
+     */
     public int getDuration()
     {
         return duration;

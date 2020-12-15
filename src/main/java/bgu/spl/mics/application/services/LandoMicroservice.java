@@ -16,17 +16,26 @@ public class LandoMicroservice  extends MicroService  {
     private long duration;
 
 
+    /**Constructor
+     * @param duration - the duration of the bombDestroy
+     */
     public LandoMicroservice(long duration) {
         super("Lando");
         this.duration = duration;
-
     }
 
     @Override
+    /**
+     * suscribe lando to BrombDestroyerEvent and termination broadcast
+     * define the callBacks of those messages:
+     *      * BombDestroyerEvent:sleep(execute the attack)
+     *      * terminathionBroadcast: set lando Termination time
+     */
     protected void initialize() {
        subscribeEvent(BombDestroyerEvent.class,(event)->{
            try {
                Thread.sleep(duration);
+               System.out.println("check");
                complete(event, true);
            } catch (InterruptedException e) {
                e.printStackTrace();

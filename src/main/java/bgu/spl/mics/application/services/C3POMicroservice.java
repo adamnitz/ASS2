@@ -25,36 +25,41 @@ import java.util.Vector;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class C3POMicroservice extends MicroService  {
-
-
+    /**
+     * Constructor
+     */
     public C3POMicroservice() {
         super("C3PO");
     }
 
     @Override
+    /**
+     * suscribe 3cpo to attackEvent and termination broadcast
+     * define the callBacks of those messages:
+     * AttackEvent: check the needed ewoks availability and aquired them,
+     * sleep(execute the attack)
+     * when he finish, he realeses the ewoks.
+     * terminathionBroadcast: set 3cpo Termination time
+     */
     protected void initialize() {
             subscribeEvent(AttackEvent.class,(event)-> {
-            Attack attack = event.getAttack();
+                System.out.println("3cpo startedAttack");
+                Attack attack = event.getAttack();
             List<Integer> serials = attack.getSerials();
             Vector<Ewok> ewoks = Ewoks.getInstance().getEwoks();
 
-            serials.sort(Comparator.comparing(Integer::intValue));
             //checks ewoks availability
                 boolean found = false;
                 int j=0;
+                int i=0;
 
-                for(int i=0; i<ewoks.size(); i++)
-                {
-                    // System.out.println("check for");
+                while(i<ewoks.size()){
                     while(j< serials.size() && !found) {
                         if (serials.get(j) == i + 1) {
                             ewoks.get(i).acquire();
                             found = true;
-                        }
-
-                        if(found)
                             j++;
-                        else
+                        }
                             i++;
                     }
 
@@ -62,39 +67,26 @@ public class C3POMicroservice extends MicroService  {
 
                 }
 
-
-
                 try {
-
                     Thread.sleep(event.getAttack().getDuration());
                     complete(event, true);
+                    System.out.println("3cpo finish attack");
                     d.setTotalAttack();
 
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                   e.printStackTrace();
                 }
-
-
                 //release the used ewoks
-                for(int i=0; i<serials.size(); i++)
-                {
-                    ewoks.get(i).release();
-
+                for(int k=0; k<serials.size(); k++){
+                    ewoks.get(k).release();
                 }
-
                 d.setC3POFinish();
 
             });
 
-        subscribeBroadcast(TerminationBroadcast.class, (e) -> {d.setC3POTerminate();
+        subscribeBroadcast(TerminationBroadcast.class, (e) ->
+        {d.setC3POTerminate();
         terminate();});
-        /*TODO:
-
-         */
         d.setC3POFinish();
-
-
     }
-
-
 }

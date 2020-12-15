@@ -10,9 +10,6 @@ public class AttackEvent implements Event<Boolean>  {
 
     /**
      * Constructor.
-     *
-     * @param serialNumbers
-     * @param duration
      */
     public AttackEvent(Attack attack) {
         this.attack = attack;

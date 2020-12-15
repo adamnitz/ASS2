@@ -2,8 +2,10 @@ package bgu.spl.mics;
 
 
 import bgu.spl.mics.application.passiveObjects.Diary;
+import bgu.spl.mics.application.services.LandoMicroservice;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The MicroService is an abstract class that any micro-service in the system
@@ -30,6 +32,8 @@ public abstract class MicroService implements Runnable {
     private String name;
     boolean isFinish = false;
     private ConcurrentHashMap<Class<? extends Message>, Callback> callMap;
+    protected AtomicInteger attackSize;
+
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -66,6 +70,7 @@ public abstract class MicroService implements Runnable {
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
         msgBus.subscribeEvent(type,this);
         callMap.put(type,callback);
+        System.out.println("printCheck");
     }
 
     /**
@@ -88,10 +93,9 @@ public abstract class MicroService implements Runnable {
      *                 {@code type} are taken from this micro-service message
      *                 queue.
      */
-    protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
+    protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback){
         msgBus.subscribeBroadcast(type,this);
         callMap.put(type,callback);
-
     }
 
     /**
@@ -106,10 +110,8 @@ public abstract class MicroService implements Runnable {
      *         			micro-service processing this event.
      * 	       			null in case no micro-service has subscribed to {@code e.getClass()}.
      */
-    protected final <T> Future<T> sendEvent(Event<T> e) {
-
+    protected final <T> Future<T> sendEvent(Event<T> e){
         Future future = msgBus.sendEvent(e);
-
         return future;
     }
 
@@ -120,7 +122,6 @@ public abstract class MicroService implements Runnable {
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
-
         msgBus.sendBroadcast(b);
     }
 
@@ -134,8 +135,7 @@ public abstract class MicroService implements Runnable {
      * @param result The result to resolve the relevant Future object.
      *               {@code e}.
      */
-    protected final <T> void complete(Event<T> e, T result) {
-
+    protected final <T> void complete(Event<T> e, T result){
         msgBus.complete(e, result);
     }
 
@@ -148,12 +148,10 @@ public abstract class MicroService implements Runnable {
      * Signals the event loop that it must terminate after handling the current
      * message.
      */
-    protected final void terminate()
-    {
+    protected final void terminate(){
     	isFinish = true;
         System.out.println(this.getName() + " finished!");
     }
-
     /**
      * @return the name of the service - the service name is given to it in the
      *         construction time and is used mainly for debugging purposes.
@@ -167,32 +165,21 @@ public abstract class MicroService implements Runnable {
      * otherwise you will end up in an infinite loop.
      */
     @Override
-    public final void run() {
+    public final void run(){
         Diary d = Diary.getInstance();
         msgBus.register(this);
         this.initialize();
-
-
-        while(!isFinish) {
+        while(!isFinish){
            try {
                 Message msg = msgBus.awaitMessage(this);
                 Callback callback = callMap.get(msg.getClass());
                 callback.call(msg);
-
-
             } catch (InterruptedException e) {
                 System.out.println("interruptException from awaitMessage");
             }
-
-
         }
             msgBus.unregister(this);
    }
-
-
-
-
-
-    }
+}
 
 
