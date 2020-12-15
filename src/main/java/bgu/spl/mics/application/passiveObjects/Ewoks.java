@@ -23,8 +23,6 @@ public class Ewoks {
         ewoks = new Vector<>();
     }
 
-    public void empty(){ewoks = new Vector<>();} //TODO: remove
-
     /**
      * building the list of our ewoks
      * @param numOfEwoks - the number of Ewoks in our list

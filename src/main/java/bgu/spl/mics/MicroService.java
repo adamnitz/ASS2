@@ -149,7 +149,6 @@ public abstract class MicroService implements Runnable {
      */
     protected final void terminate(){
     	isFinish = true;
-        System.out.println(this.getName() + " finished!");
     }
     /**
      * @return the name of the service - the service name is given to it in the

@@ -121,5 +121,4 @@ public class Diary {
     public long getLandoTerminate() {
         return LandoTerminate;
     }
-    public void resetNumberOfAttackes(){this.totalAttack = new AtomicInteger(0);}//TODO: delete
 }
