@@ -66,7 +66,6 @@ public class LeiaMicroservice extends MicroService implements Callback {
         } catch (InterruptedException e) {}
 
         for (int i = 0; i < attacks.length; i++){
-            System.out.println("attackevent is sent");
             Future future= sendEvent(new AttackEvent(attacks[i]));
             futArr.add(i,future);
         }

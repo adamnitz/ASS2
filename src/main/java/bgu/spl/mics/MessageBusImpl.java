@@ -151,7 +151,6 @@ public class MessageBusImpl implements MessageBus{
                 }catch (InterruptedException e) {}
             }
 
-            System.out.println("tookTheMessage(awaitMgs");
             Message msg = msQ.remove();
             return msg;
         }

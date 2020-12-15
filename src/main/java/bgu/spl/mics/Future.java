@@ -54,9 +54,7 @@ public class Future<T> {
 		this.result = result;
 		isDone = true;
 			this.notifyAll();
-
-		System.out.println("resolved");
-	}
+		}
 	
 	/**
      * @return true if this object has been resolved, false otherwise
