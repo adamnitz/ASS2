@@ -13,11 +13,9 @@ import java.util.Vector;
  * You can add ONLY private methods and fields to this class.
  */
 public class Ewoks {
-
     private Vector <Ewok> ewoks;
 
     private static class EwoksHolder{
-
         private static Ewoks instance = new Ewoks();
     }
 
@@ -32,8 +30,7 @@ public class Ewoks {
      * @param numOfEwoks - the number of Ewoks in our list
      */
     public void setEwoks(int numOfEwoks) {
-        for(int i=0; i<numOfEwoks;i++)
-        {
+        for(int i=0; i<numOfEwoks;i++){
             ewoks.add(new Ewok(i+1));
         }
     }
@@ -45,13 +42,7 @@ public class Ewoks {
     public static Ewoks getInstance(){
       return EwoksHolder.instance;
     }
-
     public Vector<Ewok> getEwoks() {
         return ewoks;
     }
-
-
-
-
-
 }

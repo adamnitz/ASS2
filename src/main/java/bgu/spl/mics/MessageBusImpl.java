@@ -97,7 +97,6 @@ public class MessageBusImpl implements MessageBus{
             if(eMicro.size()==0)
                 return null;
             firstMicro = eMicro.poll();
-
             eMicro.add(firstMicro);//roundRubin
         }
 
@@ -110,7 +109,6 @@ public class MessageBusImpl implements MessageBus{
             QforMs.notifyAll();
             Future future = new Future();
                 futureMap.put(e, future);
-            System.out.println("finishToSendTheEvent");
             return future;
         }
 
@@ -149,13 +147,11 @@ public class MessageBusImpl implements MessageBus{
         synchronized (msQ){
             while (msQ.isEmpty()){
                 try{
-                    System.out.println("StuckInWait IN AWAITMESSAGE");
                     msQ.wait();
                 }catch (InterruptedException e) {}
             }
 
-            System.out.println("tookTheMessage");
-
+            System.out.println("tookTheMessage(awaitMgs");
             Message msg = msQ.remove();
             return msg;
         }

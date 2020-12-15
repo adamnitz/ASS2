@@ -32,6 +32,7 @@ public class Ewok {
                 }
             }
             available =false;
+            System.out.println("ewok is acquired:" + serialNumber);
 
     }
 
@@ -41,6 +42,8 @@ public class Ewok {
     public synchronized void release() {
     	available=true;
     	notifyAll();
+        System.out.println("ewok is released:" + serialNumber);
+
     }
 
     public int getSerialNumber() {

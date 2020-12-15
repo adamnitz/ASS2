@@ -43,7 +43,7 @@ public class C3POMicroservice extends MicroService  {
      */
     protected void initialize() {
             subscribeEvent(AttackEvent.class,(event)-> {
-                System.out.println("3cpo startedAttack");
+                System.out.println("3cpo startedAttack:" +event.getAttack().getSerials());
                 Attack attack = event.getAttack();
             List<Integer> serials = attack.getSerials();
             Vector<Ewok> ewoks = Ewoks.getInstance().getEwoks();
@@ -53,32 +53,41 @@ public class C3POMicroservice extends MicroService  {
                 int j=0;
                 int i=0;
 
-                while(i<ewoks.size()){
-                    while(j< serials.size() && !found) {
-                        if (serials.get(j) == i + 1) {
-                            ewoks.get(i).acquire();
-                            found = true;
-                            j++;
-                        }
+              //  synchronized (ewoks) {
+                    while (i < ewoks.size()) {
+                        while (j < serials.size() && !found) {
+                            if (serials.get(j) == i + 1) {
+                                //  synchronized (ewoks.get(i)) {
+                                ewoks.get(i).acquire();
+                                // }
+                                found = true;
+                                j++;
+                            }
                             i++;
+                        }
+
+                        if(!found)
+                            i++;
+                        else
+                            found = false;
+
                     }
 
-                    found = false;
-
-                }
+                System.out.println("test");
 
                 try {
                     Thread.sleep(event.getAttack().getDuration());
                     complete(event, true);
+                  //  ewoks.notifyAll();
                     System.out.println("3cpo finish attack");
                     d.setTotalAttack();
 
                 } catch (InterruptedException e) {
-                   e.printStackTrace();
                 }
                 //release the used ewoks
                 for(int k=0; k<serials.size(); k++){
-                    ewoks.get(k).release();
+                    System.out.println("try to release");
+                    ewoks.get(serials.get(k)-1).release();
                 }
                 d.setC3POFinish();
 
